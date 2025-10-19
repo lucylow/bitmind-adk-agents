@@ -1,0 +1,45 @@
+{
+  "name": "bitmind-smart-invoice",
+  "version": "1.0.0",
+  "description": "AI-powered smart invoice management on Stacks blockchain",
+  "build": {
+    "command": "npm run build",
+    "outputDir": "dist",
+    "installCommand": "npm install"
+  },
+  "dev": {
+    "command": "npm run dev",
+    "port": 8080
+  },
+  "node": {
+    "version": "18"
+  },
+  "framework": "vite",
+  "status": "production-ready",
+  "lastUpdated": "2025-10-15",
+  "components": {
+    "ui": [
+      "alert",
+      "badge",
+      "button",
+      "card",
+      "dialog",
+      "input",
+      "label",
+      "select",
+      "sonner",
+      "tabs",
+      "textarea",
+      "toast",
+      "toaster",
+      "tooltip"
+    ]
+  },
+  "fixes": {
+    "dialogComponent": {
+      "date": "2025-10-15",
+      "description": "Added missing dialog.tsx component for DemoModeButton",
+      "status": "fixed"
+    }
+  }
+}

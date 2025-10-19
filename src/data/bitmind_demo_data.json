@@ -1,0 +1,313 @@
+{
+  "version": "1.0",
+  "description": "BitMind Production Demo Data - Stacks Hackathon",
+  "last_updated": "2024-12-19",
+  
+  "invoices": [
+    {
+      "invoice_id": "INV-2026-001",
+      "payee": "SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7",
+      "payer": "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE",
+      "amount": 127500000,
+      "token_contract": "SP000000000000000000002Q6VF78.sbtc-token",
+      "currency": "sBTC",
+      "milestones": [
+        {
+          "id": "milestone_1",
+          "title": "Design System & Wireframes",
+          "description": "Complete Figma design system with component library and responsive wireframes",
+          "amount": 51000000,
+          "due_date": "2026-01-15T23:59:59Z",
+          "status": "completed",
+          "completion_proof": "QmXzg...design_proof",
+          "completed_at": "2026-01-14T15:30:00Z"
+        },
+        {
+          "id": "milestone_2", 
+          "title": "MVP Deployment - Testnet",
+          "description": "Full-stack application deployment to Stacks testnet with core functionality",
+          "amount": 51000000,
+          "due_date": "2026-01-31T23:59:59Z",
+          "status": "in_progress",
+          "completion_proof": null,
+          "completed_at": null
+        },
+        {
+          "id": "milestone_3",
+          "title": "Security Audit & Mainnet Launch",
+          "description": "Third-party security audit completion and mainnet deployment",
+          "amount": 25500000,
+          "due_date": "2026-02-10T23:59:59Z",
+          "status": "pending",
+          "completion_proof": null,
+          "completed_at": null
+        }
+      ],
+      "arbiter": "SP12Z0MBIE0XTXAGGH5989HV3ZG8KEHRMY1KAVWFG",
+      "deadline": "2026-02-10T23:59:59Z",
+      "status": "active",
+      "current_milestone": 2,
+      "description": "2026 Q1 DAO Governance Dashboard - Full-stack development with Clarity smart contracts and React frontend",
+      "category": "development",
+      "priority": "high",
+      "tags": ["web3", "governance", "react", "clarity"],
+      "ipfs_hash": "QmQmKnVHgH8FXZ3wAhfVDg3zYJ8u7iM1DU67jBbcN9Q2HL",
+      "dispute": null,
+      "created_at": "2026-01-01T18:30:00Z",
+      "updated_at": "2026-01-14T15:35:00Z",
+      "security_hash": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234",
+      "confidence_score": 0.94
+    },
+    {
+      "invoice_id": "INV-2026-002",
+      "payee": "SP89ABD3FZTWD7NTV3DYZ48KWQDPJ3HTADACQH7XY",
+      "payer": "ST99E4SYKBRMGXFV6ZE79M2DV6JAP6FVQG7BCCNQ",
+      "amount": 2500000,
+      "token_contract": "SP000000000000000000002Q6VF78.sbtc-token", 
+      "currency": "sBTC",
+      "milestones": [
+        {
+          "id": "milestone_1",
+          "title": "Frontend Implementation",
+          "description": "React frontend with wallet integration and NFT display components",
+          "amount": 1000000,
+          "due_date": "2026-03-05T23:59:59Z",
+          "status": "completed",
+          "completion_proof": "QmAbC...frontend_proof",
+          "completed_at": "2026-03-04T11:20:00Z"
+        },
+        {
+          "id": "milestone_2",
+          "title": "Backend API & Smart Contracts",
+          "description": "Node.js backend with Clarity contracts for NFT minting and management",
+          "amount": 1000000, 
+          "due_date": "2026-03-15T23:59:59Z",
+          "status": "disputed",
+          "completion_proof": "QmXyZ...backend_proof",
+          "completed_at": "2026-03-14T14:45:00Z"
+        },
+        {
+          "id": "milestone_3",
+          "title": "Load Testing & Security Audit",
+          "description": "Performance testing and security review before mainnet launch",
+          "amount": 500000,
+          "due_date": "2026-03-20T23:59:59Z", 
+          "status": "blocked",
+          "completion_proof": null,
+          "completed_at": null
+        }
+      ],
+      "arbiter": null,
+      "deadline": "2026-03-20T23:59:59Z",
+      "status": "disputed",
+      "current_milestone": 2,
+      "description": "NFT Launchpad Platform - Complete marketplace for NFT creation and trading on Stacks",
+      "category": "nft_development",
+      "priority": "medium",
+      "tags": ["nft", "marketplace", "launchpad", "stacks"],
+      "ipfs_hash": "QmT6KXz6FLMFasge34FG2ZjHif6rBa4xa7bRHLZ5GPHa2j",
+      "dispute": {
+        "id": "disp_2026_001",
+        "triggered_by": "payer",
+        "triggered_at": "2026-03-18T13:00:00Z",
+        "reason": "Backend API fails security audit - critical vulnerabilities found in access control",
+        "evidence_ipfs": "QmZ4RB97ywertgF11111121343yTGFDsvYQX",
+        "dispute_type": "security_issue",
+        "severity": "high",
+        "proposed_solution": "Refund 50% of milestone and allow 2 weeks for fixes",
+        "status": "under_review"
+      },
+      "created_at": "2026-02-23T14:15:00Z",
+      "updated_at": "2026-03-18T13:05:00Z",
+      "security_hash": "b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef1234a1",
+      "confidence_score": 0.87
+    }
+  ],
+
+  "ai_test_cases": [
+    {
+      "id": "standard_invoice",
+      "description": "Well-formatted professional invoice",
+      "text": "INVOICE #2026-001\nDate: January 1, 2026\nFrom: Web3 Dev Studio (SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7)\nTo: DeFi DAO Treasury (SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE)\n\nServices: DAO Governance Dashboard Development\nTotal Amount: 1.275 sBTC\n\nMilestone Breakdown:\n- Design System: 0.51 sBTC (Due: Jan 15, 2026)\n- MVP Deployment: 0.51 sBTC (Due: Jan 31, 2026) \n- Security Audit: 0.255 sBTC (Due: Feb 10, 2026)\n\nArbiter: LegalDAO (SP12Z0MBIE0XTXAGGH5989HV3ZG8KEHRMY1KAVWFG)\nPayment in sBTC to escrow contract.",
+      "expected_extraction": {
+        "invoice_id": "2026-001",
+        "payee": "SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7",
+        "payer": "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE",
+        "amount": 127500000,
+        "currency": "sBTC",
+        "milestones": 3,
+        "arbiter": "SP12Z0MBIE0XTXAGGH5989HV3ZG8KEHRMY1KAVWFG"
+      }
+    },
+    {
+      "id": "minimal_invoice",
+      "description": "Minimal informal invoice text",
+      "text": "hey, for the nft site work: 0.025 btc to ST99E4SYKBRMGXFV6ZE79M2DV6JAP6FVQG7BCCNQ. frontend by mar 5, backend by mar 15, testing by mar 20. thx!",
+      "expected_extraction": {
+        "invoice_id": null,
+        "payee": "ST99E4SYKBRMGXFV6ZE79M2DV6JAP6FVQG7BCCNQ", 
+        "payer": null,
+        "amount": 2500000,
+        "currency": "sBTC",
+        "milestones": 3,
+        "arbiter": null
+      }
+    },
+    {
+      "id": "complex_multicurrency",
+      "description": "Multi-currency invoice with complex terms",
+      "text": "Q1 2026 Marketing Campaign Invoice\n\nRecipient: GrowthDAO (SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE)\nProvider: Marketing Agency (SPESKIM4X8R20C2YP5ZJFD7ZTREVEA3A7FRXZDXV)\n\nScope: Complete marketing strategy + execution\nTotal: 2.5 sBTC OR 15,000 STX (payer's choice)\n\nPayment schedule:\n- Strategy phase: 30% on approval (Feb 1)\n- Execution phase: 50% on campaign launch (Feb 15) \n- Analytics phase: 20% on report delivery (Mar 1)\n\nTerms: 14-day payment window. Dispute resolution via DAO vote.",
+      "expected_extraction": {
+        "invoice_id": null,
+        "payee": "SPESKIM4X8R20C2YP5ZJFD7ZTREVEA3A7FRXZDXV",
+        "payer": "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE",
+        "amount": 250000000,
+        "currency": "sBTC",
+        "milestones": 3,
+        "arbiter": null
+      }
+    }
+  ],
+
+  "security_data": {
+    "blacklisted_addresses": [
+      "SP9SUSPECT444444444444444444444444444444444",
+      "ST2FRAUDDEADEADEADEADEADEADEADEADEADEADEAD",
+      "SP1MALICIOUS8888888888888888888888888888888"
+    ],
+    "screened_entities": [
+      {
+        "address": "SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7",
+        "risk_score": 2,
+        "trust_level": "high",
+        "completed_invoices": 15,
+        "dispute_rate": 0.03
+      },
+      {
+        "address": "ST99E4SYKBRMGXFV6ZE79M2DV6JAP6FVQG7BCCNQ", 
+        "risk_score": 5,
+        "trust_level": "medium",
+        "completed_invoices": 8,
+        "dispute_rate": 0.12
+      }
+    ]
+  },
+
+  "demo_wallets": [
+    {
+      "label": "DeFi DAO Treasury",
+      "address": "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE",
+      "type": "multi_sig",
+      "balance_sats": 4500000000,
+      "network": "testnet",
+      "role": "payer"
+    },
+    {
+      "label": "Web3 Development Studio", 
+      "address": "SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7",
+      "type": "single_sig",
+      "balance_sats": 1250000000,
+      "network": "testnet",
+      "role": "payee"
+    },
+    {
+      "label": "LegalDAO Arbiter Service",
+      "address": "SP12Z0MBIE0XTXAGGH5989HV3ZG8KEHRMY1KAVWFG",
+      "type": "multi_sig", 
+      "balance_sats": 500000000,
+      "network": "testnet",
+      "role": "arbiter"
+    }
+  ],
+
+  "blockchain_events": [
+    {
+      "event_id": "evt_001",
+      "event_type": "invoice_created",
+      "invoice_id": "INV-2026-001",
+      "block_height": 253000,
+      "tx_id": "0xc16d4a3e7d8f2b9a1c5e6d8f2b9a1c5e6d8f2b9a1c5e6d8f2b9a1c5e6d8f2b9a1",
+      "timestamp": "2026-01-01T18:35:21Z",
+      "details": {
+        "payer": "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE",
+        "payee": "SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7",
+        "amount": 127500000
+      }
+    },
+    {
+      "event_id": "evt_002", 
+      "event_type": "escrow_funded",
+      "invoice_id": "INV-2026-001",
+      "block_height": 253015,
+      "tx_id": "0xd24e5b4f8e1c7a2b6d9e1c7a2b6d9e1c7a2b6d9e1c7a2b6d9e1c7a2b6d9e1c7a2",
+      "timestamp": "2026-01-01T19:01:11Z",
+      "details": {
+        "amount": 127500000,
+        "token_contract": "SP000000000000000000002Q6VF78.sbtc-token"
+      }
+    },
+    {
+      "event_id": "evt_003",
+      "event_type": "milestone_completed", 
+      "invoice_id": "INV-2026-001",
+      "block_height": 253800,
+      "tx_id": "0xe35f6c5a9f0d8b3c7e2a9f0d8b3c7e2a9f0d8b3c7e2a9f0d8b3c7e2a9f0d8b3c7",
+      "timestamp": "2026-01-14T15:40:00Z",
+      "details": {
+        "milestone_index": 1,
+        "milestone_title": "Design System & Wireframes",
+        "amount_released": 51000000
+      }
+    },
+    {
+      "event_id": "evt_004",
+      "event_type": "dispute_raised",
+      "invoice_id": "INV-2026-002", 
+      "block_height": 254200,
+      "tx_id": "0xf4707d6b0a1e4c8d3f0b1e4c8d3f0b1e4c8d3f0b1e4c8d3f0b1e4c8d3f0b1e4c8d",
+      "timestamp": "2026-03-18T13:07:44Z",
+      "details": {
+        "raised_by": "payer",
+        "reason": "Backend API security vulnerabilities",
+        "dispute_id": "disp_2026_001"
+      }
+    }
+  ],
+
+  "governance_data": {
+    "batch_approvals": [
+      {
+        "batch_id": "batch_2026_q1",
+        "description": "Q1 2026 Development Budget Approval",
+        "invoices": ["INV-2026-001", "INV-2026-002"],
+        "total_amount": 1300000000,
+        "approval_threshold": 2,
+        "approvals": [
+          {
+            "org": "SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE",
+            "approved": true,
+            "timestamp": "2026-01-02T09:15:00Z",
+            "signature": "sig_001_abc123"
+          },
+          {
+            "org": "SPNFUPQZKL2HPH8MFMV04YY28G87NP0JK56AY55G", 
+            "approved": false,
+            "timestamp": "2026-01-02T10:30:00Z",
+            "reason": "Requires additional security review"
+          },
+          {
+            "org": "SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7",
+            "approved": true, 
+            "timestamp": "2026-01-02T11:45:00Z",
+            "signature": "sig_002_def456"
+          }
+        ],
+        "status": "approved",
+        "executed_at": "2026-01-02T12:00:00Z"
+      }
+    ]
+  }
+}
+
+
+
