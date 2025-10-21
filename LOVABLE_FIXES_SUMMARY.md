@@ -320,6 +320,6 @@ If you encounter issues:
 
 *Document generated after fixing "Preview has not been built yet" error*  
 *Date: Based on provided context*  
-*Project: BitMind - Smart Invoice Management on Stacks*
+*Project: BitMind - DAO Governance Co-pilot with ADK-TS AI-agents*
 
 

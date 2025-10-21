@@ -55,7 +55,7 @@ serve(async (req) => {
       ],
       timestamp: new Date().toISOString(),
       footer: {
-        text: 'BitMind Invoice System • Powered by Stacks',
+        text: 'BitMind DAO Governance Co-pilot • Powered by ADK-TS',
         icon_url: 'https://avatars.githubusercontent.com/u/40718727'
       }
     }
@@ -80,7 +80,7 @@ serve(async (req) => {
 
     // Add transaction link if available
     if (invoiceData.txId) {
-      const explorerUrl = `https://explorer.stacks.co/txid/${invoiceData.txId}?chain=testnet`
+      const explorerUrl = `https://etherscan.io/tx/${invoiceData.txId}`
       embed.fields.push({
         name: '🔗 Transaction',
         value: `[View on Explorer](${explorerUrl})`,

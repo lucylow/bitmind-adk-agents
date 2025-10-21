@@ -11,7 +11,7 @@ Thank you for the detailed code snippets! Here's how they compare to what I've a
 | **Clarinet Tests** | Basic property tests | 12 advanced security tests + property-based | ✅ **Enhanced** |
 | **Demo Mode** | Multi-step guided tour | One-click auto-populate | ✅ **Simpler & Faster** |
 | **API Docs** | Basic curl examples | 76KB complete reference | ✅ **More Comprehensive** |
-| **Real-time Events** | SSE/WebSocket | Hiro Chainhooks | ✅ **Stacks-Native** |
+| **Real-time Events** | SSE/WebSocket | Blockchain Events | ✅ **Multi-Chain** |
 | **Stacking Yield** | Demo component | ✅ **Just Added!** | ✅ **NEW FEATURE** |
 
 ---

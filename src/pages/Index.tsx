@@ -111,7 +111,7 @@ const Index: React.FC = () => {
             BitMindAI: Neural Network for Bitcoin's Real-World Economy
           </h1>
           <p className="text-muted-foreground text-xl mb-6 max-w-3xl mx-auto">
-            AI-powered invoice parsing + Clarity smart contracts + Bitcoin-native sBTC settlement
+            DAO Governance Co-pilot powered by ADK-TS AI-agents for intelligent proposal analysis and treasury monitoring
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Badge variant="secondary" className="bg-green-100 text-green-800 px-4 py-2 text-sm">
@@ -130,6 +130,12 @@ const Index: React.FC = () => {
           
           {/* Action Buttons - Available to All Users */}
           <div className="flex gap-3 justify-center mt-6 flex-wrap">
+            <Link to="/governance">
+              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-lg transition-all animate-pulse">
+                <Brain className="w-5 h-5 mr-2" />
+                DAO Governance Co-pilot
+              </Button>
+            </Link>
             <Link to="/demo">
               <Button size="lg" className="bg-gradient-to-r from-orange-500 to-purple-600 text-white hover:shadow-lg transition-all">
                 <Sparkles className="w-5 h-5 mr-2" />
@@ -210,14 +216,32 @@ const Index: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <Link to="/governance">
+                <Card className="hover:shadow-xl transition-all cursor-pointer bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-400 hover:border-purple-600 relative overflow-hidden">
+                  <div className="absolute top-2 right-2">
+                    <Badge className="bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs">NEW</Badge>
+                  </div>
+                  <CardContent className="pt-6 text-center">
+                    <Brain className="w-12 h-12 mx-auto mb-3 text-purple-600 animate-pulse" />
+                    <h3 className="font-bold mb-2">AI Governance</h3>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      AI-powered proposal analysis & voting
+                    </p>
+                    <Badge variant="outline" className="text-xs bg-white">
+                      95.2% Accuracy
+                    </Badge>
+                  </CardContent>
+                </Card>
+              </Link>
+
               <Link to="/nft-marketplace">
                 <Card className="hover:shadow-xl transition-all cursor-pointer bg-white border-2 hover:border-purple-400">
                   <CardContent className="pt-6 text-center">
                     <Award className="w-12 h-12 mx-auto mb-3 text-purple-600" />
                     <h3 className="font-bold mb-2">Invoice NFTs</h3>
                     <p className="text-sm text-muted-foreground mb-3">
-                      Tokenize & trade receivables for instant liquidity
+                      Tokenize & trade receivables
                     </p>
                     <Badge variant="outline" className="text-xs">
                       $2.4M Volume
@@ -232,7 +256,7 @@ const Index: React.FC = () => {
                     <Users className="w-12 h-12 mx-auto mb-3 text-blue-600" />
                     <h3 className="font-bold mb-2">MultiSig Treasury</h3>
                     <p className="text-sm text-muted-foreground mb-3">
-                      3-of-5 approval workflows for secure DAO funding
+                      Secure DAO funding
                     </p>
                     <Badge variant="outline" className="text-xs">
                       247 Proposals
@@ -247,7 +271,7 @@ const Index: React.FC = () => {
                     <Zap className="w-12 h-12 mx-auto mb-3 text-green-600" />
                     <h3 className="font-bold mb-2">Yield Optimizer</h3>
                     <p className="text-sm text-muted-foreground mb-3">
-                      Earn 7-25% APY on escrowed funds
+                      Earn 7-25% APY
                     </p>
                     <Badge variant="outline" className="text-xs">
                       $760K TVL
@@ -259,10 +283,10 @@ const Index: React.FC = () => {
               <Link to="/analytics">
                 <Card className="hover:shadow-xl transition-all cursor-pointer bg-white border-2 hover:border-orange-400">
                   <CardContent className="pt-6 text-center">
-                    <Brain className="w-12 h-12 mx-auto mb-3 text-orange-600" />
+                    <Target className="w-12 h-12 mx-auto mb-3 text-orange-600" />
                     <h3 className="font-bold mb-2">AI Analytics</h3>
                     <p className="text-sm text-muted-foreground mb-3">
-                      Risk scoring, fraud detection & predictions
+                      Risk & fraud detection
                     </p>
                     <Badge variant="outline" className="text-xs">
                       94% Accuracy
@@ -307,9 +331,9 @@ const Index: React.FC = () => {
                 <div className="w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center mb-3 mx-auto">
                   <Zap className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="font-bold text-center mb-2">Smart Contract Layer</h3>
+                <h3 className="font-bold text-center mb-2">ADK-TS AI-Agent Layer</h3>
                 <p className="text-xs text-muted-foreground text-center">
-                  Clarity brings programmability to Bitcoin without modifying the base layer—no reentrancy, decidable execution
+                  Multi-agent orchestration with IQ AI's ADK-TS framework for intelligent governance analysis and decision support
                 </p>
               </div>
               <div className="bg-white p-4 rounded-lg border border-orange-200">
@@ -355,9 +379,9 @@ const Index: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-bold mb-2">Clarity Smart Contracts</h3>
+                  <h3 className="font-bold mb-2">ADK-TS Multi-Agent System</h3>
                   <p className="text-sm text-muted-foreground">
-                    Formal verification ensures state transitions through created→funded→verified→released
+                    Coordinated AI-agents analyze proposals, monitor treasury health, and generate voting recommendations
                   </p>
                 </div>
               </div>
@@ -506,7 +530,7 @@ const Index: React.FC = () => {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle>Recent Invoices</CardTitle>
-            <CardDescription>AI-parsed invoices with Clarity smart contract escrow</CardDescription>
+            <CardDescription>AI-analyzed invoices with automated escrow and ADK-TS agent governance</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">

@@ -1,6 +1,6 @@
 [project]
-name = "smart-invoice-dao"
-description = "AI-powered Bitcoin-native DAO invoicing via Clarity escrow on Stacks"
+name = "bitmind-adk-agents"
+description = "DAO Governance Co-pilot with ADK-TS AI-agents for intelligent proposal analysis"
 authors = ["bitmind"]
 telemetry = false
 requirements = []

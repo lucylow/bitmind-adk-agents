@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "description": "BitMind Production Demo Data - Stacks Hackathon",
-  "last_updated": "2024-12-19",
+  "description": "BitMind Production Demo Data - ADK-TS Hackathon 2025",
+  "last_updated": "2025-01-15",
   
   "invoices": [
     {
@@ -25,7 +25,7 @@
         {
           "id": "milestone_2", 
           "title": "MVP Deployment - Testnet",
-          "description": "Full-stack application deployment to Stacks testnet with core functionality",
+          "description": "Full-stack application deployment with ADK-TS agents and core functionality",
           "amount": 51000000,
           "due_date": "2026-01-31T23:59:59Z",
           "status": "in_progress",
@@ -47,10 +47,10 @@
       "deadline": "2026-02-10T23:59:59Z",
       "status": "active",
       "current_milestone": 2,
-      "description": "2026 Q1 DAO Governance Dashboard - Full-stack development with Clarity smart contracts and React frontend",
+      "description": "2026 Q1 DAO Governance Dashboard - Full-stack development with ADK-TS AI-agents and React frontend",
       "category": "development",
       "priority": "high",
-      "tags": ["web3", "governance", "react", "clarity"],
+      "tags": ["web3", "governance", "react", "adk-ts", "ai-agents"],
       "ipfs_hash": "QmQmKnVHgH8FXZ3wAhfVDg3zYJ8u7iM1DU67jBbcN9Q2HL",
       "dispute": null,
       "created_at": "2026-01-01T18:30:00Z",
@@ -78,8 +78,8 @@
         },
         {
           "id": "milestone_2",
-          "title": "Backend API & Smart Contracts",
-          "description": "Node.js backend with Clarity contracts for NFT minting and management",
+          "title": "Backend API & Blockchain Integration",
+          "description": "Node.js backend with blockchain integration for NFT minting and management",
           "amount": 1000000, 
           "due_date": "2026-03-15T23:59:59Z",
           "status": "disputed",
@@ -101,10 +101,10 @@
       "deadline": "2026-03-20T23:59:59Z",
       "status": "disputed",
       "current_milestone": 2,
-      "description": "NFT Launchpad Platform - Complete marketplace for NFT creation and trading on Stacks",
+      "description": "NFT Launchpad Platform - Complete marketplace for NFT creation and trading with AI-agent curation",
       "category": "nft_development",
       "priority": "medium",
-      "tags": ["nft", "marketplace", "launchpad", "stacks"],
+      "tags": ["nft", "marketplace", "launchpad", "ai-agents"],
       "ipfs_hash": "QmT6KXz6FLMFasge34FG2ZjHif6rBa4xa7bRHLZ5GPHa2j",
       "dispute": {
         "id": "disp_2026_001",

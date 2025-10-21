@@ -31,7 +31,7 @@ const Help = () => {
     {
       icon: <Bitcoin className="w-8 h-8 text-orange-600" />,
       title: "Escrow & Payment",
-      description: "Secure Bitcoin-native escrow using Stacks blockchain and sBTC for trustless milestone payments.",
+      description: "Secure escrow with ADK-TS AI-agent monitoring and automated milestone payment verification.",
       steps: [
         "DAO approves and funds the invoice",
         "Funds locked in smart contract escrow",
@@ -66,19 +66,19 @@ const Help = () => {
   const faqs = [
     {
       question: "What is BitMind?",
-      answer: "BitMind is an AI-powered invoice escrow platform for DAOs built on the Stacks blockchain. It automates contractor payments using smart contracts and milestone-based releases."
+      answer: "BitMind is a DAO Governance Co-pilot AI-agent built with ADK-TS. It helps DAO members make informed voting decisions through automated proposal analysis, treasury monitoring, and intelligent recommendations."
     },
     {
-      question: "How does the escrow system work?",
-      answer: "When a DAO funds an invoice, the payment is locked in a Clarity smart contract. As contractors complete milestones, the DAO reviews and approves, triggering automatic payment releases."
+      question: "How does the AI-agent system work?",
+      answer: "BitMind uses multiple specialized ADK-TS agents that work together: Proposal Analyst examines proposals, Treasury Monitor tracks DAO health, and Voting Strategist generates recommendations with confidence scores."
     },
     {
       question: "What happens during a dispute?",
       answer: "Either party can initiate a dispute. Both sides submit evidence, and selected arbitrators review the case and vote on a resolution. The smart contract automatically executes the decision."
     },
     {
-      question: "What assets are supported?",
-      answer: "BitMind supports sBTC (Stacks Bitcoin), STX tokens, and various bridged assets. Multi-asset invoices allow flexible payment structures."
+      question: "What DAOs are supported?",
+      answer: "BitMind supports any DAO with on-chain governance. The AI-agents can analyze proposals across multiple chains including Ethereum, Polygon, and other EVM-compatible networks."
     },
     {
       question: "How are arbitrators selected?",
@@ -209,8 +209,8 @@ const Help = () => {
             <Card className="shadow-md hover:shadow-xl transition-all border-t-4 border-t-blue-500">
               <CardHeader>
                 <Code className="w-10 h-10 text-blue-600 mb-3" />
-                <CardTitle>Smart Contracts</CardTitle>
-                <CardDescription>Explore our open-source Clarity contracts</CardDescription>
+                <CardTitle>ADK-TS Agents</CardTitle>
+                <CardDescription>Explore our open-source AI-agent implementations</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 

@@ -4,7 +4,7 @@
  * Fetch cryptocurrency prices from CoinGecko public API
  * No API key required for basic usage
  */
-export const fetchCoinGeckoPrice = async (coinIds = ['bitcoin', 'stacks']) => {
+export const fetchCoinGeckoPrice = async (coinIds = ['bitcoin', 'ethereum']) => {
     try {
         const ids = coinIds.join(',');
         const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
@@ -19,7 +19,7 @@ export const fetchCoinGeckoPrice = async (coinIds = ['bitcoin', 'stacks']) => {
         // Return fallback data
         return {
             bitcoin: { usd: 45000, usd_24h_change: 2.5 },
-            stacks: { usd: 0.85, usd_24h_change: -1.2 },
+            ethereum: { usd: 2800, usd_24h_change: 1.8 },
         };
     }
 };
@@ -120,33 +120,33 @@ export const parseInvoiceWithAI = async (naturalLanguageInput) => {
     }
 };
 /**
- * Convert USD to STX using live price data
+ * Convert USD to ETH using live price data
  */
-export const convertUSDtoSTX = async (usdAmount) => {
+export const convertUSDtoETH = async (usdAmount) => {
     try {
-        const prices = await fetchCoinGeckoPrice(['stacks']);
-        const stxPrice = prices.stacks?.usd || 0.85;
-        return usdAmount / stxPrice;
+        const prices = await fetchCoinGeckoPrice(['ethereum']);
+        const ethPrice = prices.ethereum?.usd || 2800;
+        return usdAmount / ethPrice;
     }
     catch (error) {
-        console.error('Error converting USD to STX:', error);
+        console.error('Error converting USD to ETH:', error);
         // Fallback conversion rate
-        return usdAmount / 0.85;
+        return usdAmount / 2800;
     }
 };
 /**
- * Convert STX to USD using live price data
+ * Convert ETH to USD using live price data
  */
-export const convertSTXtoUSD = async (stxAmount) => {
+export const convertETHtoUSD = async (ethAmount) => {
     try {
-        const prices = await fetchCoinGeckoPrice(['stacks']);
-        const stxPrice = prices.stacks?.usd || 0.85;
-        return stxAmount * stxPrice;
+        const prices = await fetchCoinGeckoPrice(['ethereum']);
+        const ethPrice = prices.ethereum?.usd || 2800;
+        return ethAmount * ethPrice;
     }
     catch (error) {
-        console.error('Error converting STX to USD:', error);
+        console.error('Error converting ETH to USD:', error);
         // Fallback conversion rate
-        return stxAmount * 0.85;
+        return ethAmount * 2800;
     }
 };
 /**
@@ -154,15 +154,15 @@ export const convertSTXtoUSD = async (stxAmount) => {
  */
 export const getMarketData = async () => {
     try {
-        const prices = await fetchCoinGeckoPrice(['bitcoin', 'stacks']);
+        const prices = await fetchCoinGeckoPrice(['bitcoin', 'ethereum']);
         return {
             btc: {
                 price: prices.bitcoin?.usd || 45000,
                 change24h: prices.bitcoin?.usd_24h_change || 0,
             },
-            stx: {
-                price: prices.stacks?.usd || 0.85,
-                change24h: prices.stacks?.usd_24h_change || 0,
+            eth: {
+                price: prices.ethereum?.usd || 2800,
+                change24h: prices.ethereum?.usd_24h_change || 0,
             },
         };
     }

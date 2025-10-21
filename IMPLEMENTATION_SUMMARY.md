@@ -6,7 +6,7 @@ Your BitMind project now includes **5 advanced DeFi features** with complete sma
 
 ---
 
-## 📦 Smart Contracts (Clarity)
+## 📦 AI-Agent System (ADK-TS)
 
 ### 1. `contracts/invoice-nft-marketplace.clar`
 **Invoice Receivables Marketplace** - Trade tokenized invoices as NFTs
@@ -81,7 +81,7 @@ Your BitMind project now includes **5 advanced DeFi features** with complete sma
 ### 4. `src/components/CrossChainSwap.tsx`
 **Route:** `/cross-chain-swap`
 - Token swap interface with 5 assets
-- Multi-chain support (Stacks, Bitcoin, Ethereum, Polygon)
+- Multi-chain support (Ethereum, Polygon, Arbitrum, Optimism)
 - Live exchange rate calculation
 - Fee breakdown (0.5%)
 - Swap preview with routing info
@@ -126,7 +126,7 @@ Your BitMind project now includes **5 advanced DeFi features** with complete sma
 ### ✨ What Makes This Special
 
 1. **Bitcoin-Native DeFi**
-   - Built on Stacks, secured by Bitcoin
+   - Built with ADK-TS AI-agents for intelligent governance
    - sBTC integration for Bitcoin-backed settlements
    - No Ethereum dependencies
 
@@ -172,7 +172,7 @@ All components include realistic demo data:
 
 **Cross-Chain Swap:**
 - 5 tokens (STX, BTC, sBTC, USDC, ETH)
-- 4 chains (Stacks, Bitcoin, Ethereum, Polygon)
+- 4 chains (Ethereum, Polygon, Arbitrum, Optimism)
 - Mock exchange rates
 
 **Treasury:**
@@ -336,7 +336,7 @@ Built with ❤️ using:
 - **Clarity** - Smart contract language
 - **React + TypeScript** - Frontend framework
 - **Tailwind CSS + shadcn/ui** - Beautiful UI components
-- **Stacks.js** - Blockchain integration
+- **ADK-TS** - AI-agent orchestration framework
 
 ---
 

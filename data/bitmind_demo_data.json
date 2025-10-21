@@ -4,7 +4,7 @@
       "id": "INV-001",
       "client": "DAO_A",
       "amount": 1000,
-      "currency": "STX",
+      "currency": "USDC",
       "milestones": [
         { "id": 1, "description": "Phase 1 Completion", "status": "completed" },
         { "id": 2, "description": "Phase 2 Completion", "status": "pending" }
@@ -14,7 +14,7 @@
       "id": "INV-002",
       "client": "DAO_B",
       "amount": 500,
-      "currency": "STX",
+      "currency": "USDC",
       "milestones": [
         { "id": 1, "description": "Initial Deposit", "status": "completed" }
       ]

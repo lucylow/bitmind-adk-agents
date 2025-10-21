@@ -24,6 +24,7 @@ import APIShowcase from "./pages/APIShowcase";
 import RealtimeMonitor from "./pages/RealtimeMonitor";
 import DiscordNotifications from "./pages/DiscordNotifications";
 import InteractiveDemo from "./pages/InteractiveDemo";
+import GovernanceCopilot from "./pages/GovernanceCopilot";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
           {/* Demo Pages - Public for easy access without wallet */}
           <Route path="/demo" element={<Demo />} />
           <Route path="/interactive-demo" element={<InteractiveDemo />} />
+          <Route path="/governance" element={<GovernanceCopilot />} />
           
           {/* Protected Dashboard and Features */}
           <Route path="/app" element={<ProtectedRoute><Index /></ProtectedRoute>} />

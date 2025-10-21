@@ -90,15 +90,15 @@ export async function fetchBitcoinPrice(vsCurrency = 'usd') {
     return data.bitcoin[vsCurrency];
 }
 /**
- * Get Stacks (STX) price
+ * Get Ethereum (ETH) price
  */
-export async function fetchStacksPrice(vsCurrency = 'usd') {
-    const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=blockstack&vs_currencies=${vsCurrency}`);
+export async function fetchEthereumPrice(vsCurrency = 'usd') {
+    const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=${vsCurrency}`);
     if (!response.ok) {
         throw new Error(`CoinGecko API error: ${response.statusText}`);
     }
     const data = await response.json();
-    return data.blockstack[vsCurrency];
+    return data.ethereum[vsCurrency];
 }
 /**
  * Get multiple cryptocurrency prices
@@ -123,31 +123,31 @@ export async function fetchCoinDetails(coinId) {
     return await response.json();
 }
 // ============================================
-// 4. Stacks Blockchain - Public Node API
+// 4. Ethereum Blockchain - Public RPC API
 // ============================================
-const STACKS_API_URL = 'https://stacks-node-api.mainnet.stacks.co';
-const STACKS_TESTNET_API_URL = 'https://stacks-node-api.testnet.stacks.co';
-export async function fetchStacksBlockchainInfo(testnet = false) {
-    const apiUrl = testnet ? STACKS_TESTNET_API_URL : STACKS_API_URL;
-    const response = await fetch(`${apiUrl}/v2/info`);
+const ETH_API_URL = 'https://api.etherscan.io/api';
+const ETH_TESTNET_API_URL = 'https://api-goerli.etherscan.io/api';
+export async function fetchEthereumBlockchainInfo(testnet = false) {
+    const apiUrl = testnet ? ETH_TESTNET_API_URL : ETH_API_URL;
+    const response = await fetch(`${apiUrl}?module=proxy&action=eth_blockNumber`);
     if (!response.ok) {
-        throw new Error(`Stacks API error: ${response.statusText}`);
+        throw new Error(`Ethereum API error: ${response.statusText}`);
     }
     return await response.json();
 }
-export async function fetchStacksAccountBalance(address, testnet = false) {
-    const apiUrl = testnet ? STACKS_TESTNET_API_URL : STACKS_API_URL;
-    const response = await fetch(`${apiUrl}/v2/accounts/${address}?proof=0`);
+export async function fetchEthereumAccountBalance(address, testnet = false) {
+    const apiUrl = testnet ? ETH_TESTNET_API_URL : ETH_API_URL;
+    const response = await fetch(`${apiUrl}?module=account&action=balance&address=${address}&tag=latest`);
     if (!response.ok) {
-        throw new Error(`Stacks API error: ${response.statusText}`);
+        throw new Error(`Ethereum API error: ${response.statusText}`);
     }
     return await response.json();
 }
-export async function fetchStacksTransaction(txId, testnet = false) {
-    const apiUrl = testnet ? STACKS_TESTNET_API_URL : STACKS_API_URL;
-    const response = await fetch(`${apiUrl}/extended/v1/tx/${txId}`);
+export async function fetchEthereumTransaction(txId, testnet = false) {
+    const apiUrl = testnet ? ETH_TESTNET_API_URL : ETH_API_URL;
+    const response = await fetch(`${apiUrl}?module=proxy&action=eth_getTransactionByHash&txhash=${txId}`);
     if (!response.ok) {
-        throw new Error(`Stacks API error: ${response.statusText}`);
+        throw new Error(`Ethereum API error: ${response.statusText}`);
     }
     return await response.json();
 }
@@ -247,13 +247,13 @@ export async function fetchBitcoinPriceCached() {
     return price;
 }
 /**
- * Cached Stacks price fetch (1 minute cache)
+ * Cached Ethereum price fetch (1 minute cache)
  */
-export async function fetchStacksPriceCached() {
-    const cached = apiCache.get('stx-price');
+export async function fetchEthereumPriceCached() {
+    const cached = apiCache.get('eth-price');
     if (cached !== null)
         return cached;
-    const price = await fetchStacksPrice();
-    apiCache.set('stx-price', price);
+    const price = await fetchEthereumPrice();
+    apiCache.set('eth-price', price);
     return price;
 }

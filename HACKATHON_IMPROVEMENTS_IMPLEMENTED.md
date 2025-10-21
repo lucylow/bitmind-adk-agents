@@ -252,7 +252,7 @@ const periodYield = (annualYield * escrowDays) / 365;
 
 ### 1. sBTC Yield Calculator
 - **First** invoice platform showing Bitcoin yield potential
-- **Unique** to Stacks/Bitcoin ecosystem
+- **Unique** ADK-TS multi-agent governance system
 - **Educational** about Proof-of-Transfer
 - **Practical** value for DAO treasurers
 

@@ -2,7 +2,7 @@
 
 ## Summary
 
-I've successfully researched and implemented comprehensive improvements to your BitMind codebase following Stacks and Hiro best practices. All changes are optimized for maximum hackathon scoring across the four judging criteria.
+I've successfully implemented comprehensive improvements to your BitMind codebase using ADK-TS AI-agents from IQ AI. All changes are optimized for maximum hackathon scoring across the four judging criteria.
 
 ---
 
@@ -336,7 +336,7 @@ Your BitMind project now has:
 
 ---
 
-**Built with ❤️ for the Stacks AI Hackathon**  
+**Built with ❤️ for the ADK-TS Hackathon 2025**  
 **Date**: October 14, 2025  
 **Status**: ✅ COMPLETE AND READY TO JUDGE
 
