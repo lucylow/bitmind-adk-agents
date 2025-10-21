@@ -4,38 +4,38 @@ import { Brain, Shield, Bitcoin, Zap, Clock, Users } from 'lucide-react';
 const features = [
   {
     icon: Brain,
-    title: "AI-Powered Development",
-    description: "NLP converts project descriptions into production-ready Clarity smart contracts with security checks and parameterization.",
+    title: "Multi-Agent Orchestration",
+    description: "ADK-TS powered system with Proposal Analyst, Treasury Monitor, and Voting Strategist agents working in concert for comprehensive governance analysis.",
     color: "from-blue-500 to-cyan-500",
   },
   {
     icon: Shield,
-    title: "Bank-Grade Security",
-    description: "Leverages Clarity's decidability, no reentrancy, predictable gas, and optional formal verification for escrow contracts.",
+    title: "Layered Guardrails",
+    description: "Risk-based tool gating with relevance checks, safety filters, and PII sanitization ensuring secure AI operations with human-in-loop approvals for high-risk actions.",
     color: "from-green-500 to-emerald-500",
   },
   {
     icon: Bitcoin,
-    title: "Bitcoin-Native",
-    description: "Settle invoices in sBTC, unlocking Bitcoin as a payments rail for DAOs and real-world services.",
+    title: "Treasury Impact Analysis",
+    description: "AI-agents assess financial implications of proposals in real-time, monitoring treasury health and generating alerts for risk exposure.",
     color: "from-orange-500 to-yellow-500",
   },
   {
     icon: Zap,
-    title: "Instant Deployment",
-    description: "One-click deployment to Stacks testnet/mainnet with automated contract verification and optimization.",
+    title: "Explainable Recommendations",
+    description: "Generate clear, actionable voting recommendations backed by multi-factor analysis including security assessment, financial impact, and community sentiment.",
     color: "from-purple-500 to-pink-500",
   },
   {
     icon: Clock,
-    title: "Time-Saving Automation",
-    description: "Reduce invoice processing time from weeks to minutes with automated milestone tracking and payment releases.",
+    title: "Immutable Audit Logs",
+    description: "Complete action history with model versioning and confidence scores, providing compliance-ready audit trails for all governance decisions.",
     color: "from-red-500 to-rose-500",
   },
   {
     icon: Users,
-    title: "DAO-Ready",
-    description: "Built for decentralized organizations with multi-sig support, voting mechanisms, and transparent treasury management.",
+    title: "Built with ADK-TS",
+    description: "Production-ready implementation using IQ AI's Agent Development Kit with structured outputs, tool taxonomy, and advanced safety mechanisms.",
     color: "from-indigo-500 to-blue-500",
   },
 ];
@@ -55,7 +55,7 @@ export function FeaturesSection() {
             Why Choose BitMind?
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Built for DAOs: AI→Clarity→sBTC — secure, auditable, and automated.
+            Built for Web3 Governance: ADK-TS agents with guardrails, audit trails, and explainable AI.
           </p>
         </motion.div>
 

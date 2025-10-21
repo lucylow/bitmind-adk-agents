@@ -13,12 +13,12 @@ export function Footer() {
               </div>
               <div>
                 <div className="text-xl font-bold">BitMind</div>
-                <div className="text-sm text-gray-400">Where Bitcoin learns to think</div>
+                <div className="text-sm text-gray-400">Where DAOs think together</div>
               </div>
             </div>
             <p className="text-gray-400 max-w-md">
-              AI-powered smart invoicing for DAOs on Stacks. Transform natural language 
-              into Bitcoin-backed Clarity smart contracts.
+              Multi-agent DAO governance co-pilot built with ADK-TS. Intelligent proposal analysis, 
+              treasury monitoring, and explainable voting recommendations powered by IQ AI.
             </p>
           </div>
 
@@ -47,7 +47,7 @@ export function Footer() {
         {/* Bottom */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="text-gray-400 text-sm mb-4 md:mb-0">
-            © 2025 BitMind. Built for Stacks Vibe Coding Hackathon.
+            © 2025 BitMind. Built for ADK-TS Hackathon 2025 by IQ AI.
           </div>
           <div className="flex space-x-4">
             <a href="https://github.com" className="text-gray-400 hover:text-white transition-colors">

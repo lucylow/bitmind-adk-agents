@@ -14,7 +14,7 @@ export function HeroSection() {
           className="inline-flex items-center rounded-full bg-white/80 px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-gray-200 backdrop-blur-sm mb-8"
         >
           <Zap className="w-4 h-4 mr-2 text-yellow-500" />
-          🚀 Built for Stacks Vibe Coding Hackathon 2025
+          🤖 Built for ADK-TS Hackathon 2025 by IQ AI
         </motion.div>
 
         {/* Main Heading */}
@@ -24,9 +24,9 @@ export function HeroSection() {
           transition={{ delay: 0.1 }}
           className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6"
         >
-          <span className="block text-gray-900">AI-Powered</span>
+          <span className="block text-gray-900">DAO Governance</span>
           <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 text-gradient">
-            Smart Invoices
+            Co-pilot AI-Agent
           </span>
         </motion.h1>
 
@@ -37,8 +37,8 @@ export function HeroSection() {
           transition={{ delay: 0.2 }}
           className="text-xl sm:text-2xl text-gray-600 max-w-4xl mx-auto mb-10 leading-relaxed"
         >
-          Transform natural language into secure, Bitcoin-native contracts. 
-          Automate DAO contractor payments with AI-generated Clarity contracts on Stacks.
+          Multi-agent orchestration for intelligent DAO governance. 
+          Analyze proposals, assess treasury impact, and generate explainable voting recommendations with ADK-TS agents.
         </motion.p>
 
         {/* Stats */}
@@ -49,16 +49,16 @@ export function HeroSection() {
           className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-2xl mx-auto text-gray-700 mb-12"
         >
           <div className="text-center">
-            <div className="text-3xl font-bold text-gray-900 mb-2">10x</div>
-            <div className="text-gray-600">Faster Contract Creation</div>
+            <div className="text-3xl font-bold text-gray-900 mb-2">3</div>
+            <div className="text-gray-600">ADK-TS AI-Agents</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-gray-900 mb-2">100%</div>
-            <div className="text-gray-600">Clarity Security</div>
+            <div className="text-gray-600">Audit Trail</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-gray-900 mb-2">$0</div>
-            <div className="text-gray-600">Dispute Costs</div>
+            <div className="text-3xl font-bold text-gray-900 mb-2">Real-time</div>
+            <div className="text-gray-600">Governance Insights</div>
           </div>
         </motion.div>
 
@@ -96,7 +96,7 @@ export function HeroSection() {
           transition={{ delay: 0.5 }}
           className="flex flex-wrap justify-center gap-4"
         >
-          {['Stacks', 'Clarity', 'sBTC', 'AI', 'Bitcoin', 'DAO'].map((tech) => (
+          {['ADK-TS', 'IQ AI', 'Multi-Agent', 'DAO', 'Governance', 'Web3'].map((tech) => (
             <div
               key={tech}
               className="px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-gray-700 ring-1 ring-gray-200"

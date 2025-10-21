@@ -14,10 +14,10 @@ export function CTASection() {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-            Ready to Transform DAO Payments?
+            Ready to Revolutionize DAO Governance?
           </h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join the future of decentralized finance with AI-powered, Bitcoin-native smart invoices.
+            Experience intelligent governance with ADK-TS multi-agent systems and IQ AI-powered decision support.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
