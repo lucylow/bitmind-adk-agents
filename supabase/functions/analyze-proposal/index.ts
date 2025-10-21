@@ -103,10 +103,11 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Error analyzing proposal:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to analyze proposal';
     
     return new Response(
       JSON.stringify({
-        error: error.message || 'Failed to analyze proposal',
+        error: errorMessage,
         fallback: {
           summary: 'AI analysis temporarily unavailable',
           keyPoints: ['Proposal requires manual review'],
