@@ -54,8 +54,8 @@ const DEFAULT_TOUR_STEPS: TourStep[] = [
   },
   {
     id: 'security',
-    title: '🔒 Bitcoin-Native Security',
-    description: 'Your invoice will be deployed as a Clarity smart contract on Stacks, inheriting Bitcoin\'s security. Post-conditions ensure only expected state changes occur.',
+    title: '🔒 Blockchain Security',
+    description: 'Your invoice will be deployed as a smart contract on Stacks blockchain. Post-conditions ensure only expected state changes occur.',
     action: 'Got it!'
   },
   {

@@ -370,7 +370,7 @@ export default function SmartInvoiceDemo() {
         <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-orange-500 to-purple-600 bg-clip-text text-transparent">
           Smart Invoice Deals for DAOs
         </h1>
-        <p className="text-gray-600 mb-3">AI-powered Bitcoin-native invoicing on Stacks</p>
+        <p className="text-gray-600 mb-3">AI-powered blockchain invoicing on Stacks</p>
         
         <div className="flex gap-2 justify-center items-center flex-wrap">
           {useMockData && (

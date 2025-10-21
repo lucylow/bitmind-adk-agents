@@ -322,7 +322,7 @@ const Index: React.FC = () => {
                 </div>
                 <h3 className="font-bold text-center mb-2">Bitcoin Security</h3>
                 <p className="text-xs text-muted-foreground text-center">
-                  Every transaction is anchored to Bitcoin blocks, inheriting Bitcoin's security model and finality guarantees
+                  Every transaction is anchored to Layer 1 blocks, inheriting the security model and finality guarantees
                 </p>
               </div>
               <div className="bg-white p-4 rounded-lg border border-orange-200">
@@ -340,7 +340,7 @@ const Index: React.FC = () => {
                 </div>
                 <h3 className="font-bold text-center mb-2">1:1 Bitcoin Peg</h3>
                 <p className="text-xs text-muted-foreground text-center">
-                  sBTC is backed 1:1 by real BTC, enabling Bitcoin-native DeFi without bridging to other chains
+                  sBTC is backed 1:1 by real BTC, enabling blockchain-native DeFi without bridging to other chains
                 </p>
               </div>
             </div>
@@ -390,7 +390,7 @@ const Index: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-bold mb-2">Bitcoin-Native Settlement</h3>
+                  <h3 className="font-bold mb-2">Blockchain Settlement</h3>
                   <p className="text-sm text-muted-foreground">
                     sBTC escrow eliminates counter-party risk with cryptographically enforced payment release
                   </p>
@@ -513,7 +513,7 @@ const Index: React.FC = () => {
             <CardHeader>
               <Shield className="w-8 h-8 mb-2 text-orange-600" />
               <CardTitle>Settlement Time</CardTitle>
-              <CardDescription>Bitcoin-native sBTC escrow</CardDescription>
+              <CardDescription>Blockchain sBTC escrow</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-orange-600">Instant</p>

@@ -28,7 +28,16 @@
     "adk:mcp-server": "tsx src/adk-agents/mcp/governance-data-server.ts",
     "dao:demo": "tsx src/dao-index.ts",
     "dao:demo-script": "tsx demo/demo-script.ts",
-    "dao:quick": "tsx src/agents/dao-agent.ts"
+    "dao:quick": "tsx src/agents/dao-agent.ts",
+    "demo:adk-guardrails": "tsx demo/adk-governance-demo.ts",
+    "eval:adk": "tsx evals/eval-runner.ts",
+    "test:adk-agents": "jest tests/proposal-analyst.test.ts",
+    "agents:check": "tsc --noEmit src/adk-agents/**/*.ts",
+    "atp:agent": "tsx src/adk-agents/agents/premium-analyst-atp.agent.ts",
+    "atp:example": "tsx src/adk-agents/examples/atp-integration-example.ts",
+    "atp:wallet": "tsx -e \"import {AgentWallet} from './src/adk-agents/atp/agent-wallet'; const w = new AgentWallet({privateKey: process.env.AGENT_PRIVATE_KEY, rpcUrl: process.env.FRAXTAL_RPC_URL, tokenAddress: process.env.BITMIND_TOKEN_ADDRESS}); w.getStatus().then(console.log)\"",
+    "atp:capabilities": "tsx -e \"import {AgentWallet} from './src/adk-agents/atp/agent-wallet'; const w = new AgentWallet({privateKey: process.env.AGENT_PRIVATE_KEY, rpcUrl: process.env.FRAXTAL_RPC_URL, tokenAddress: process.env.BITMIND_TOKEN_ADDRESS}); w.getAllCapabilities().then(console.log)\"",
+    "atp:register": "tsx -e \"import {registerBitMindAgent} from './src/adk-agents/atp/marketplace-integration'; registerBitMindAgent(process.env.AGENT_WALLET_ADDRESS).then(() => console.log('Registered'))\""
   },
   "keywords": [
     "blockchain",
@@ -69,6 +78,8 @@
     "@iqai/adk": "^0.1.0",
     "ethers": "^6.13.0",
     "axios": "^1.6.7",
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
     "class-variance-authority": "^0.7.0",
@@ -88,9 +99,13 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
     "@types/node": "^20.11.25",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
     "@vitejs/plugin-react-swc": "^3.5.0",

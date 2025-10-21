@@ -206,7 +206,7 @@ const TransactionStatusTracker: React.FC<TransactionStatusTrackerProps> = ({
             </p>
             {txId && (
               <p className="text-xs text-green-600 mt-1">
-                Block anchored to Bitcoin for immutable security
+                Block anchored to Layer 1 for immutable security
               </p>
             )}
           </div>

@@ -1,7 +1,7 @@
 /**
  * Bitcoin Block Confirmation Widget
- * Shows Bitcoin security anchoring for Stacks transactions
- * Demonstrates Bitcoin alignment and security model
+ * Shows Layer 1 security anchoring for Stacks transactions
+ * Demonstrates blockchain alignment and security model
  */
 
 import React, { useState, useEffect } from 'react';
@@ -161,7 +161,7 @@ export function BitcoinConfirmationWidget({
               {/* What this means */}
               <div className="bg-blue-50 p-3 rounded border border-blue-200">
                 <p className="text-xs text-blue-900">
-                  <strong>What this means:</strong> Your transaction inherits Bitcoin's security 
+                  <strong>What this means:</strong> Your transaction inherits Layer 1 blockchain security 
                   through Stacks' Proof-of-Transfer consensus. After {CONFIRMATIONS_FOR_FINALITY} 
                   Bitcoin block confirmations (~60 min), this transaction achieves the same 
                   finality guarantees as a direct Bitcoin transaction.

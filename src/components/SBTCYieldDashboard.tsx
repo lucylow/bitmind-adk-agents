@@ -155,7 +155,7 @@ export function SBTCYieldDashboard({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 pt-2 border-t">
           <div className="text-center p-2 bg-white rounded">
             <p className="text-lg font-bold text-green-600">100%</p>
-            <p className="text-xs text-muted-foreground">Bitcoin-backed</p>
+            <p className="text-xs text-muted-foreground">Blockchain-backed</p>
           </div>
           <div className="text-center p-2 bg-white rounded">
             <p className="text-lg font-bold text-blue-600">Non-Custodial</p>

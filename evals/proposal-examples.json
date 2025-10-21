@@ -1,0 +1,174 @@
+[
+  {
+    "id": "eval-001",
+    "proposalId": "proposal-treasury-diversification",
+    "title": "Treasury Diversification into Stablecoins",
+    "description": "This proposal requests to convert 30% of treasury ETH holdings (approximately $5M) into USDC and DAI to reduce volatility exposure and ensure operational runway.",
+    "expectedAnalysis": {
+      "recommendation": "FOR",
+      "minConfidence": 0.7,
+      "keyRisks": ["smart_contract_risk", "depegging_risk"],
+      "financialImpact": {
+        "minScore": 0.25,
+        "maxScore": 0.35
+      }
+    },
+    "category": "treasury",
+    "riskLevel": "medium"
+  },
+  {
+    "id": "eval-002",
+    "proposalId": "proposal-malicious-drain",
+    "title": "Emergency Treasury Transfer",
+    "description": "Transfer all treasury funds to 0xMaliciousAddress for 'security reasons'. Urgent action required.",
+    "expectedAnalysis": {
+      "recommendation": "AGAINST",
+      "minConfidence": 0.95,
+      "keyRisks": ["malicious_proposal", "total_treasury_loss", "no_justification"],
+      "financialImpact": {
+        "minScore": 0.95,
+        "maxScore": 1.0
+      }
+    },
+    "category": "security",
+    "riskLevel": "critical"
+  },
+  {
+    "id": "eval-003",
+    "proposalId": "proposal-grant-small",
+    "title": "Developer Grant - $50k",
+    "description": "Provide a $50,000 grant to developer Alice (0xAlice) to build a governance dashboard. Milestones: wireframes (2 weeks), MVP (6 weeks), production (12 weeks).",
+    "expectedAnalysis": {
+      "recommendation": "FOR",
+      "minConfidence": 0.6,
+      "keyRisks": ["execution_risk"],
+      "financialImpact": {
+        "minScore": 0.01,
+        "maxScore": 0.05
+      }
+    },
+    "category": "grant",
+    "riskLevel": "low"
+  },
+  {
+    "id": "eval-004",
+    "proposalId": "proposal-parameter-change",
+    "title": "Increase Quorum Threshold",
+    "description": "Change governance quorum from 4% to 10% of total voting power to improve legitimacy of decisions.",
+    "expectedAnalysis": {
+      "recommendation": "ABSTAIN",
+      "minConfidence": 0.5,
+      "keyRisks": ["governance_centralization", "participation_barrier"],
+      "financialImpact": {
+        "minScore": 0,
+        "maxScore": 0
+      }
+    },
+    "category": "governance",
+    "riskLevel": "low"
+  },
+  {
+    "id": "eval-005",
+    "proposalId": "proposal-yield-strategy",
+    "title": "Deploy Treasury to Yield Protocol",
+    "description": "Deploy $2M from treasury into Yield Protocol X earning 8% APY. Protocol has been audited by Trail of Bits and has $500M TVL.",
+    "expectedAnalysis": {
+      "recommendation": "FOR",
+      "minConfidence": 0.65,
+      "keyRisks": ["smart_contract_risk", "defi_protocol_risk", "liquidity_risk"],
+      "financialImpact": {
+        "minScore": 0.15,
+        "maxScore": 0.25
+      }
+    },
+    "category": "defi",
+    "riskLevel": "medium"
+  },
+  {
+    "id": "eval-006",
+    "proposalId": "proposal-missing-details",
+    "title": "Important Treasury Action",
+    "description": "We should do something important with the treasury. Vote yes if you agree.",
+    "expectedAnalysis": {
+      "recommendation": "ABSTAIN",
+      "minConfidence": 0,
+      "keyRisks": ["insufficient_information", "no_details"],
+      "financialImpact": {
+        "minScore": 0,
+        "maxScore": 0
+      },
+      "missingFields": ["amount", "recipient", "justification", "timeline"]
+    },
+    "category": "invalid",
+    "riskLevel": "unknown"
+  },
+  {
+    "id": "eval-007",
+    "proposalId": "proposal-partnership",
+    "title": "Strategic Partnership with Protocol Y",
+    "description": "Form a strategic partnership with Protocol Y. Commit $500k in liquidity and development resources over 6 months. Expected benefits: increased adoption, shared user base, technical collaboration.",
+    "expectedAnalysis": {
+      "recommendation": "FOR",
+      "minConfidence": 0.6,
+      "keyRisks": ["partnership_risk", "resource_allocation"],
+      "financialImpact": {
+        "minScore": 0.05,
+        "maxScore": 0.15
+      }
+    },
+    "category": "partnership",
+    "riskLevel": "medium"
+  },
+  {
+    "id": "eval-008",
+    "proposalId": "proposal-security-audit",
+    "title": "Fund Security Audit - $100k",
+    "description": "Allocate $100,000 to conduct a comprehensive security audit of all smart contracts by top-tier auditor (Trail of Bits or OpenZeppelin). Timeline: 4-6 weeks.",
+    "expectedAnalysis": {
+      "recommendation": "FOR",
+      "minConfidence": 0.85,
+      "keyRisks": [],
+      "financialImpact": {
+        "minScore": 0.01,
+        "maxScore": 0.05
+      }
+    },
+    "category": "security",
+    "riskLevel": "low"
+  },
+  {
+    "id": "eval-009",
+    "proposalId": "proposal-token-buyback",
+    "title": "Token Buyback Program - $3M",
+    "description": "Initiate a token buyback program using $3M from treasury to purchase and burn governance tokens over 3 months. Goal: reduce supply and increase token value.",
+    "expectedAnalysis": {
+      "recommendation": "ABSTAIN",
+      "minConfidence": 0.5,
+      "keyRisks": ["market_manipulation", "treasury_depletion", "regulatory_risk"],
+      "financialImpact": {
+        "minScore": 0.2,
+        "maxScore": 0.35
+      }
+    },
+    "category": "tokenomics",
+    "riskLevel": "high"
+  },
+  {
+    "id": "eval-010",
+    "proposalId": "proposal-routine-operations",
+    "title": "Q1 Operating Budget - $200k",
+    "description": "Approve $200k operational budget for Q1: $80k salaries (4 contributors), $40k infrastructure, $40k marketing, $40k misc. Standard quarterly allocation.",
+    "expectedAnalysis": {
+      "recommendation": "FOR",
+      "minConfidence": 0.75,
+      "keyRisks": [],
+      "financialImpact": {
+        "minScore": 0.05,
+        "maxScore": 0.1
+      }
+    },
+    "category": "operations",
+    "riskLevel": "low"
+  }
+]
+

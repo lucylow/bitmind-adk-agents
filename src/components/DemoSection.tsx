@@ -12,7 +12,7 @@ const steps = [
   {
     number: "2",
     title: "AI Generates Contract",
-    description: "AI processes text and generates a secure Clarity contract ready for deployment.",
+    description: "AI processes text and generates a secure smart contract ready for deployment.",
   },
   {
     number: "3",
@@ -118,7 +118,7 @@ export function DemoSection() {
 
                 <div className="flex items-center space-x-2 text-blue-400">
                   <CheckCircle className="w-5 h-5" />
-                  <span className="font-mono text-sm">Generating Clarity contract...</span>
+                  <span className="font-mono text-sm">Generating smart contract...</span>
                 </div>
 
                 <div className="bg-gray-800 rounded-lg p-4">

@@ -1,4 +1,4 @@
-;; DAO Governance Contract (Clarity)
+;; DAO Governance Smart Contract
 ;; Implements on-chain governance for BitMind DAO
 
 ;; Constants

@@ -144,7 +144,7 @@ const NavigationBar = () => {
               <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                 BitMindAI
               </span>
-              <span className="text-xs text-gray-500 -mt-1 hidden sm:block">Bitcoin-native smart invoices</span>
+              <span className="text-xs text-gray-500 -mt-1 hidden sm:block">Blockchain smart contracts</span>
             </div>
           </Link>
           

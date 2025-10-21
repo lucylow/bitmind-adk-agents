@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers the complete blockchain integration for your DAO Governance Co-pilot using **Stacks blockchain** and **Clarity smart contracts**.
+This guide covers the complete blockchain integration for your DAO Governance Co-pilot using **Stacks blockchain** and **smart contracts**.
 
 ## 📁 File Structure
 
@@ -16,7 +16,7 @@ src/adk-agents/tools/
 └── blockchain-integration-tools.ts  # ADK-TS tools for agents
 
 contracts/
-└── dao-governance.clar              # Clarity smart contract
+└── dao-governance.clar              # DAO governance smart contract
 
 src/components/
 └── DAOProposalCard.tsx             # React UI component
@@ -58,7 +58,7 @@ await walletConnector.disconnectWallet();
 
 ## 📜 2. Smart Contract Deployment
 
-### Deploy the Clarity Contract
+### Deploy the Smart Contract
 
 ```bash
 # Using Clarinet
@@ -333,7 +333,7 @@ async function aiPoweredVote(proposalId: string) {
 
 ### Testnet Deployment
 
-- [ ] Deploy Clarity contract to testnet
+- [ ] Deploy smart contract to testnet
 - [ ] Update contract address in `stacks-contract-caller.ts`
 - [ ] Test wallet connection
 - [ ] Test vote casting
@@ -342,7 +342,7 @@ async function aiPoweredVote(proposalId: string) {
 
 ### Mainnet Deployment
 
-- [ ] Audit Clarity contract
+- [ ] Audit smart contract
 - [ ] Deploy to mainnet
 - [ ] Update contract address to mainnet
 - [ ] Switch network to `StacksMainnet()`
@@ -351,7 +351,7 @@ async function aiPoweredVote(proposalId: string) {
 
 ---
 
-## 📝 9. Clarity Contract Parameters
+## 📝 9. Smart Contract Parameters
 
 ### Adjust These Based on Your DAO
 
@@ -459,7 +459,7 @@ console.log('Network:', network.isMainnet() ? 'mainnet' : 'testnet');
 You now have:
 
 ✅ **Stacks wallet connection** - Connect Hiro, Xverse, Leather  
-✅ **Clarity smart contract** - Full DAO governance logic  
+✅ **Smart contract** - Full DAO governance logic  
 ✅ **Contract interaction layer** - TypeScript SDK  
 ✅ **ADK-TS tools** - AI agents can use blockchain  
 ✅ **React UI** - Beautiful proposal cards  

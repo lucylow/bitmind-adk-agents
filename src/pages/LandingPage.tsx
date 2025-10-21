@@ -26,7 +26,7 @@ function Navigation() {
               <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 text-gradient">
                 BitMind
               </span>
-              <span className="text-xs text-gray-500 -mt-1 hidden sm:block">Where DAOs think together</span>
+              <span className="text-xs text-gray-500 -mt-1 hidden sm:block">DAO Governance Co-pilot AI-Agent</span>
             </div>
           </Link>
 

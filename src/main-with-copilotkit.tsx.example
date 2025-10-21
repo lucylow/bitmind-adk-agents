@@ -1,0 +1,63 @@
+/**
+ * Example: main.tsx with CopilotKit Integration
+ * 
+ * To use this file:
+ * 1. Install CopilotKit: npm install @copilotkit/react-core @copilotkit/react-ui
+ * 2. Rename this file to main.tsx (backup the original first)
+ * 3. Update VITE_COPILOT_URL in .env
+ * 4. Run proxy server: cd backend-proxy && npm run dev
+ */
+
+import { createRoot } from 'react-dom/client';
+import { StrictMode } from 'react';
+import { CopilotKit } from '@copilotkit/react-core';
+import '@copilotkit/react-ui/styles.css'; // CopilotKit default styles
+import App from './App';
+import './index.css';
+
+// Debug logging for Lovable deployment
+console.log('🚀 BitMind app starting...');
+console.log('Environment:', import.meta.env.MODE);
+console.log('Base URL:', import.meta.env.BASE_URL);
+
+// CopilotKit configuration
+const COPILOT_URL = import.meta.env.VITE_COPILOT_URL || 'http://localhost:3001/api/copilotkit';
+console.log('🤖 CopilotKit URL:', COPILOT_URL);
+
+// Global error handler for debugging
+window.addEventListener('error', (event) => {
+  console.error('Global error caught:', event.error);
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled promise rejection:', event.reason);
+});
+
+// Get root element with error handling
+const rootElement = document.getElementById("root");
+
+if (!rootElement) {
+  console.error('❌ Root element not found! Check your index.html');
+  throw new Error('Root element #root not found');
+}
+
+console.log('✅ Root element found, rendering React app with CopilotKit...');
+
+try {
+  createRoot(rootElement).render(
+    <StrictMode>
+      <CopilotKit 
+        url={COPILOT_URL}
+        // Optional: Add public API key for hosted CopilotKit
+        // publicApiKey={import.meta.env.VITE_COPILOT_API_KEY}
+      >
+        <App />
+      </CopilotKit>
+    </StrictMode>
+  );
+  console.log('✅ React app with CopilotKit rendered successfully');
+} catch (error) {
+  console.error('❌ Error rendering React app:', error);
+  throw error;
+}
+
