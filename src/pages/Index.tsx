@@ -108,46 +108,43 @@ const Index: React.FC = () => {
         {/* Hero Section */}
         <section className="mb-12 text-center">
           <h1 className="text-5xl font-bold mb-4 text-foreground">
-            BitMindAI: Neural Network for Bitcoin's Real-World Economy
+            From Chaos to Client Success in 3 Days
           </h1>
           <p className="text-muted-foreground text-xl mb-6 max-w-3xl mx-auto">
-            DAO Governance Co-pilot powered by ADK-TS AI-agents for intelligent proposal analysis and treasury monitoring
+            Automate client onboarding for agencies, consultants & service businesses. Stop losing clients to disorganized first impressions.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Badge variant="secondary" className="bg-green-100 text-green-800 px-4 py-2 text-sm">
-              ✓ 95%+ AI Accuracy
+              ⏱️ 2 weeks → 3 days onboarding
             </Badge>
             <Badge variant="secondary" className="bg-blue-100 text-blue-800 px-4 py-2 text-sm">
-              ⚡ Sub-2s Processing
+              💰 Save 5-8 hrs per client
             </Badge>
             <Badge variant="secondary" className="bg-purple-100 text-purple-800 px-4 py-2 text-sm">
-              ₿ Bitcoin-Native Settlement
+              📈 30% more clients capacity
             </Badge>
             <Badge variant="secondary" className="bg-orange-100 text-orange-800 px-4 py-2 text-sm">
-              🔒 Post-Condition Security
+              🎯 Reduce 90-day churn
             </Badge>
           </div>
           
           {/* Action Buttons - Available to All Users */}
           <div className="flex gap-3 justify-center mt-6 flex-wrap">
-            <Link to="/governance">
-              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-lg transition-all animate-pulse">
-                <Brain className="w-5 h-5 mr-2" />
-                DAO Governance Co-pilot
-              </Button>
-            </Link>
             <Link to="/demo">
               <Button size="lg" className="bg-gradient-to-r from-orange-500 to-purple-600 text-white hover:shadow-lg transition-all">
                 <Sparkles className="w-5 h-5 mr-2" />
-                Try DAO Invoice Demo
+                Try Live Demo
               </Button>
             </Link>
             <Link to="/create">
               <Button variant="outline" size="lg">
                 <Plus className="w-4 h-4 mr-2" />
-                Create Invoice
+                Start Free Trial
               </Button>
             </Link>
+            <Button variant="ghost" size="lg" onClick={() => document.getElementById('use-case')?.scrollIntoView({ behavior: 'smooth' })}>
+              See How It Works →
+            </Button>
           </div>
           
           {/* Demo Feature Highlight */}

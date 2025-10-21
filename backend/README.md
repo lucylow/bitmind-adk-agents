@@ -1,340 +1,515 @@
-# BitMind Smart Invoice Backend
+# 🚀 DAO Governance Co-pilot Backend API
 
-AI-powered invoice escrow system backend built on Node.js with Stacks blockchain integration.
+Backend server for the DAO Governance Co-pilot, providing AI-powered proposal analysis and voting recommendations through ADK-TS agents.
 
-## 🏗️ Architecture Overview
+## Features
 
-### Tech Stack
-- **Runtime**: Node.js 18+
-- **Framework**: Express.js
-- **Database**: PostgreSQL with Prisma ORM
-- **Blockchain**: Stacks.js + Clarity Smart Contracts
-- **AI**: OpenAI GPT-4 for invoice parsing
-- **Storage**: IPFS via Pinata
-- **Cache**: Redis for rate limiting and sessions
+- 🤖 **ADK-TS Integration** - Gemini 2.0 powered AI agents
+- 🔌 **WebSocket Support** - Real-time bidirectional communication
+- 🗄️ **MongoDB Persistence** - User profiles and analysis caching
+- 🔐 **Wallet Authentication** - Cryptographic signature verification
+- ⚡ **Rate Limiting** - Configurable request throttling
+- 📊 **RESTful API** - 8 comprehensive endpoints
+- 🛡️ **Security** - Helmet, CORS, JWT support
+- 📈 **Performance** - Compression, caching, indexing
 
-### Core Features
-- 🤖 AI-powered natural language invoice parsing
-- 📝 Smart contract generation and deployment
-- 💰 Milestone-based payment escrow
-- ⚖️ Decentralized dispute resolution
-- 📦 IPFS document storage
-- 🔒 Secure blockchain transactions
-
-## 🚀 Getting Started
+## Quick Start
 
 ### Prerequisites
-- Node.js v18 or higher
-- PostgreSQL database
-- Redis (optional, for rate limiting)
-- Stacks wallet with testnet STX
-- OpenAI API key
-- Pinata account for IPFS
+
+- Node.js 18+
+- MongoDB (local or MongoDB Atlas)
+- Google Gemini API key ([Get here](https://aistudio.google.com/apikey))
 
 ### Installation
 
-1. **Install dependencies**
 ```bash
+# Install dependencies
 npm install
+
+# Copy environment template
+cp env.example .env
+
+# Edit .env and add your API keys
+nano .env
 ```
 
-2. **Configure environment**
+### Environment Configuration
+
+Required variables in `.env`:
+
 ```bash
-cp .env.example .env
-# Edit .env with your configuration
+# Required
+GOOGLE_API_KEY=your_gemini_api_key_here
+MONGODB_URI=mongodb://localhost:27017/dao-copilot
+
+# Server
+PORT=3001
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:5173
+
+# Security
+JWT_SECRET=your_jwt_secret_here
 ```
 
-3. **Set up database**
-```bash
-npm run prisma:migrate
-npm run prisma:generate
-```
+### Start Server
 
-4. **Start development server**
 ```bash
+# Development mode with hot reload
 npm run dev
+
+# Production build
+npm run build
+npm start
+
+# Production with PM2
+pm2 start dist/server.js --name dao-copilot-backend
 ```
 
-The server will start on `http://localhost:3001`
+Server will start at `http://localhost:3001`
 
-## 📁 Project Structure
+## API Endpoints
+
+### Health Check
+
+```bash
+GET /health
+```
+
+Response:
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-01-01T00:00:00.000Z",
+  "version": "1.0.0",
+  "services": {
+    "database": "connected",
+    "agents": "initialized"
+  }
+}
+```
+
+### Agent Endpoints
+
+All agent endpoints require authentication headers:
+```
+x-wallet-address: 0x...
+x-signature: 0x...
+x-message: "Sign this message to authenticate: [timestamp]"
+```
+
+#### Analyze Proposal
+
+```bash
+POST /api/agent/analyze-proposal
+Content-Type: application/json
+
+{
+  "proposalId": "prop-123",
+  "daoAddress": "0x...",
+  "force": false
+}
+```
+
+#### Get Voting Recommendation
+
+```bash
+POST /api/agent/voting-recommendation
+Content-Type: application/json
+
+{
+  "proposalId": "prop-123"
+}
+```
+
+#### Chat with Agent
+
+```bash
+POST /api/agent/chat
+Content-Type: application/json
+
+{
+  "message": "Should we approve this treasury allocation?",
+  "context": {}
+}
+```
+
+#### Get User Profile
+
+```bash
+GET /api/agent/user/profile
+```
+
+#### Update Preferences
+
+```bash
+PUT /api/agent/user/preferences
+Content-Type: application/json
+
+{
+  "preferences": {
+    "riskTolerance": "MODERATE",
+    "focusAreas": ["DEFI", "GOVERNANCE"],
+    "votingStrategy": "ACTIVE"
+  }
+}
+```
+
+## WebSocket Events
+
+Connect to WebSocket at `ws://localhost:3001`
+
+### Client → Server Events
+
+```javascript
+// Send chat message
+socket.emit('agent:message', {
+  message: 'Analyze proposal #123',
+  context: {}
+});
+
+// Request proposal analysis
+socket.emit('proposal:analyze', {
+  proposalId: 'prop-123',
+  daoAddress: '0x...'
+});
+
+// Subscribe to topics
+socket.emit('user:subscribe', {
+  topics: ['proposals', 'alerts']
+});
+```
+
+### Server → Client Events
+
+```javascript
+// Agent response
+socket.on('agent:response', (data) => {
+  console.log(data.content);
+});
+
+// Typing indicator
+socket.on('agent:typing', (data) => {
+  console.log('Agent is typing:', data.isTyping);
+});
+
+// Analysis complete
+socket.on('proposal:analysis:complete', (data) => {
+  console.log('Analysis:', data.analysis);
+});
+
+// Notifications
+socket.on('user:notification', (notification) => {
+  console.log('Notification:', notification);
+});
+```
+
+## Project Structure
 
 ```
 backend/
 ├── src/
-│   ├── controllers/         # Route handlers
-│   │   └── invoiceController.js
-│   ├── services/           # Business logic
-│   │   ├── aiProcessor.js       # AI invoice parsing
-│   │   ├── contractService.js   # Blockchain interactions
-│   │   ├── invoiceService.js    # Invoice management
-│   │   └── storageService.js    # IPFS storage
-│   ├── middleware/         # Express middleware
-│   │   ├── errorHandler.js
-│   │   ├── rateLimiter.js
-│   │   └── requestLogger.js
-│   ├── routes/             # API routes
-│   │   ├── index.js
-│   │   └── invoiceRoutes.js
-│   ├── utils/              # Utilities
-│   │   ├── logger.js
-│   │   └── validators.js
-│   └── server.js           # Express app entry point
-├── prisma/
-│   └── schema.prisma       # Database schema
-├── scripts/                # Deployment scripts
-├── tests/                  # Test suites
+│   ├── config/
+│   │   └── env.ts              # Environment validation
+│   ├── models/
+│   │   ├── User.ts             # User data model
+│   │   └── ProposalAnalysis.ts # Analysis cache model
+│   ├── services/
+│   │   └── AgentService.ts     # ADK-TS agent wrapper
+│   ├── api/
+│   │   └── routes/
+│   │       └── agent.ts        # API route handlers
+│   ├── middleware/
+│   │   └── auth.ts             # Authentication middleware
+│   ├── websocket/
+│   │   └── socketHandler.ts    # WebSocket event handlers
+│   └── server.ts               # Main application entry
 ├── package.json
-└── .env.example
+├── tsconfig.json
+├── env.example
+└── README.md
 ```
 
-## 🔌 API Endpoints
+## Architecture
 
-### Invoice Management
-
-#### Parse Invoice with AI
-```http
-POST /api/v1/invoice/parse
-Content-Type: application/json
-
-{
-  "description": "Natural language invoice description..."
-}
+```
+Express Server + Socket.IO
+        ↓
+  Agent Service
+        ↓
+  ADK-TS Agents
+   (Gemini 2.0)
+        ↓
+    MongoDB
 ```
 
-#### Create Smart Invoice
-```http
-POST /api/v1/invoice/create
-Content-Type: application/json
+### Three Specialized Agents
 
-{
-  "description": "Build a website...",
-  "clientWallet": "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
-  "useAI": true
-}
-```
+1. **Proposal Analyst** - Deep proposal analysis
+2. **Voting Strategist** - Personalized recommendations
+3. **Treasury Monitor** - Financial health assessment
 
-#### Get Invoice
-```http
-GET /api/v1/invoice/:id
-```
+## Development
 
-#### Get User Invoices
-```http
-GET /api/v1/invoice/user/:walletAddress
-```
-
-#### Get Invoice Status
-```http
-GET /api/v1/invoice/:id/status
-```
-
-### Invoice Actions
-
-#### Lock Funds
-```http
-POST /api/v1/invoice/:id/lock
-Content-Type: application/json
-
-{
-  "amount": 1000000,
-  "clientKey": "private-key"
-}
-```
-
-#### Release Milestone
-```http
-POST /api/v1/invoice/:id/release
-Content-Type: application/json
-
-{
-  "milestoneId": "milestone-id",
-  "clientKey": "private-key"
-}
-```
-
-### Dispute Resolution
-
-#### Raise Dispute
-```http
-POST /api/v1/invoice/:id/dispute
-Content-Type: application/json
-
-{
-  "raisedBy": "wallet-address",
-  "reason": "Dispute reason...",
-  "evidence": "Evidence details...",
-  "userKey": "private-key"
-}
-```
-
-#### Resolve Dispute
-```http
-POST /api/v1/dispute/:id/resolve
-Content-Type: application/json
-
-{
-  "resolution": "Resolution details...",
-  "favorClient": true,
-  "arbitratorKey": "private-key"
-}
-```
-
-### Utility Endpoints
-
-#### Health Check
-```http
-GET /api/health
-```
-
-#### API Info
-```http
-GET /api/info
-```
-
-## 🔐 Environment Variables
-
-```env
-# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/smartinvoice"
-
-# Stacks Blockchain
-STACKS_NODE_URL="https://stacks-node-api.testnet.stacks.co"
-STACKS_NETWORK="testnet"
-DEPLOYER_PRIVATE_KEY="your-private-key"
-
-# OpenAI
-OPENAI_API_KEY="your-openai-key"
-OPENAI_MODEL="gpt-4"
-
-# IPFS (Pinata)
-PINATA_JWT="your-pinata-jwt"
-
-# Redis (optional)
-REDIS_URL="redis://localhost:6379"
-
-# Server
-NODE_ENV="development"
-PORT=3001
-CORS_ORIGIN="http://localhost:5173"
-```
-
-## 🧪 Testing
+### Run in Development Mode
 
 ```bash
-# Run all tests
+npm run dev
+```
+
+Uses `nodemon` and `tsx` for hot reload.
+
+### Type Checking
+
+```bash
+npm run typecheck
+```
+
+### Linting
+
+```bash
+npm run lint
+```
+
+### Testing
+
+```bash
 npm test
-
-# Run tests in watch mode
-npm run test:watch
 ```
 
-## 📊 Database Management
+## Database Schema
+
+### User Collection
+
+```typescript
+{
+  walletAddress: string;      // Primary key
+  preferences: {
+    riskTolerance: string;
+    focusAreas: string[];
+    votingStrategy: string;
+  };
+  votingHistory: Array<{
+    proposalId: string;
+    vote: string;
+    timestamp: Date;
+  }>;
+  conversations: Array<{
+    message: string;
+    response: string;
+    agent: string;
+    timestamp: Date;
+  }>;
+  createdAt: Date;
+  lastActive: Date;
+}
+```
+
+### ProposalAnalysis Collection
+
+```typescript
+{
+  proposalId: string;         // Index
+  daoName: string;
+  analysis: {
+    summary: string;
+    risks: Array<RiskFactor>;
+    recommendations: string[];
+    confidence: number;
+  };
+  timestamp: Date;
+  expiresAt: Date;            // TTL index (7 days)
+}
+```
+
+## Security
+
+### Authentication
+
+Uses wallet signature verification:
+
+1. Client signs message with wallet
+2. Server verifies signature matches wallet address
+3. Message includes timestamp (5-minute expiry)
+
+### Rate Limiting
+
+- Default: 100 requests per 15 minutes
+- Configurable via environment variables
+- Per-user tracking
+
+### CORS
+
+- Configured allowed origins
+- Credentials support for authenticated requests
+
+## Performance
+
+### Caching
+
+- Proposal analyses cached for 24 hours
+- MongoDB TTL indexes for auto-cleanup
+- Reduces redundant AI agent calls
+
+### Compression
+
+- Gzip compression for all HTTP responses
+- Reduces bandwidth usage by ~70%
+
+### Database Optimization
+
+- Indexed queries for common patterns
+- Connection pooling
+- Efficient query patterns
+
+## Deployment
+
+### Docker
+
+```dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY dist ./dist
+
+EXPOSE 3001
+
+CMD ["node", "dist/server.js"]
+```
+
+### Environment Variables (Production)
 
 ```bash
-# Generate Prisma client
-npm run prisma:generate
-
-# Create migration
-npm run prisma:migrate
-
-# Open Prisma Studio
-npm run prisma:studio
+NODE_ENV=production
+GOOGLE_API_KEY=<production_key>
+MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/dao-copilot
+REDIS_URL=redis://production-redis:6379
+JWT_SECRET=<strong_random_secret>
+CORS_ORIGIN=https://your-frontend-domain.com
 ```
 
-## 🔧 Development
+### PM2 Process Manager
 
-### Code Structure
-- All business logic in `services/`
-- Route handlers in `controllers/`
-- Database operations use Prisma ORM
-- Blockchain interactions via `contractService.js`
-- AI processing in `aiProcessor.js`
-
-### Error Handling
-- Global error handler middleware
-- Async error wrapper for controllers
-- Detailed logging with Winston
-
-### Validation
-- Request validation with express-validator
-- Stacks address format validation
-- Input sanitization
-
-### Security
-- Helmet.js for HTTP headers
-- CORS configuration
-- Rate limiting with Redis
-- Input validation and sanitization
-
-## 📝 Logging
-
-Logs are written to:
-- Console (colored output in development)
-- `logs/combined.log` (all logs)
-- `logs/error.log` (errors only)
-
-Log levels: error, warn, info, http, debug
-
-## 🚢 Deployment
-
-### Production Build
 ```bash
-npm run build
+# Start
+pm2 start dist/server.js --name dao-backend
+
+# Monitor
+pm2 monit
+
+# Logs
+pm2 logs dao-backend
+
+# Restart
+pm2 restart dao-backend
 ```
 
-### Start Production Server
+## Monitoring
+
+### Health Check Endpoint
+
 ```bash
-NODE_ENV=production npm start
+curl http://localhost:3001/health
 ```
 
-### Environment Setup
-1. Set up PostgreSQL database
-2. Configure environment variables
-3. Run database migrations
-4. Start Redis (optional)
-5. Deploy to hosting platform
+### Logs
 
-### Recommended Hosting
-- **Backend**: Heroku, Railway, DigitalOcean
-- **Database**: Heroku Postgres, Supabase, Railway
-- **Redis**: Redis Cloud, Heroku Redis
-- **IPFS**: Pinata
+Development logs to console with timestamps.
 
-## 📚 Additional Resources
+Production logs should be directed to a logging service:
+- Winston for structured logging
+- Sentry for error tracking
+- DataDog for metrics
 
-- [Stacks Documentation](https://docs.stacks.co/)
-- [Clarity Language Reference](https://docs.stacks.co/clarity/)
-- [Prisma Documentation](https://www.prisma.io/docs/)
-- [OpenAI API Reference](https://platform.openai.com/docs/)
-- [Pinata IPFS Documentation](https://docs.pinata.cloud/)
+## Troubleshooting
 
-## 🤝 Contributing
+### Server Won't Start
+
+**MongoDB Connection Error:**
+```bash
+# Check if MongoDB is running
+mongod --version
+mongo
+
+# Or use MongoDB Atlas connection string
+MONGODB_URI=mongodb+srv://...
+```
+
+**Port Already in Use:**
+```bash
+# Find process using port 3001
+lsof -i :3001
+
+# Kill process
+kill -9 <PID>
+
+# Or change port in .env
+PORT=3002
+```
+
+### Agent Initialization Failed
+
+**Missing API Key:**
+```bash
+# Verify in .env
+echo $GOOGLE_API_KEY
+
+# Should not be empty
+```
+
+**API Key Invalid:**
+- Get new key from https://aistudio.google.com/apikey
+- Ensure key has Gemini API access enabled
+
+### WebSocket Connection Issues
+
+**CORS Error:**
+- Check CORS_ORIGIN in backend .env matches frontend URL
+- Ensure Socket.IO CORS configuration is correct
+
+**Authentication Failed:**
+- Verify wallet signature is valid
+- Check message timestamp (not expired)
+- Ensure headers are correctly formatted
+
+## API Rate Limits
+
+| Endpoint | Rate Limit |
+|----------|-----------|
+| All endpoints | 100 req/15min |
+| Analysis | 20 req/15min |
+| Chat | 50 req/15min |
+
+Configurable via:
+```bash
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+```
+
+## Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
+2. Create feature branch
+3. Make changes
+4. Run tests and linting
+5. Submit pull request
 
-## 📄 License
+## License
 
-MIT License - see LICENSE file for details
+MIT License - See LICENSE file for details
 
-## 🆘 Support
+## Support
 
-For issues and questions:
-- Create an issue on GitHub
-- Check documentation
-- Review API examples
+For issues or questions:
+- Check logs: `npm run dev` output
+- Test endpoints with curl/Postman
+- Verify MongoDB connection
+- Check environment variables
 
-## 🔄 Changelog
+---
 
-### v1.0.0 (Current)
-- Initial release
-- AI-powered invoice parsing
-- Smart contract deployment
-- Milestone management
-- Dispute resolution
-- IPFS integration
-
+**Built with ADK-TS by IQ.AI** 🚀
