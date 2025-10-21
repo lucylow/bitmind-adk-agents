@@ -1,6 +1,10 @@
 import { NotificationService } from './notificationService'
 import { supabase } from '@/integrations/supabase/client'
+import type { Database } from '@/integrations/supabase/types'
 import type { NotificationType } from './supabase-types'
+
+type InvoiceEventInsert = Database['public']['Tables']['invoice_events']['Insert']
+type InvoiceEventRow = Database['public']['Tables']['invoice_events']['Row']
 
 interface InvoiceEventData {
   invoiceId: string
@@ -61,7 +65,7 @@ async function logInvoiceEvent(
   eventData: InvoiceEventData
 ): Promise<void> {
   try {
-    const { error } = await (supabase.from('invoice_events') as any).insert({
+    const eventRecord: InvoiceEventInsert = {
       invoice_id: parseInt(invoiceId),
       event_type: eventType,
       tx_id: eventData.txId || null,
@@ -74,7 +78,9 @@ async function logInvoiceEvent(
         description: eventData.description,
         dueDate: eventData.dueDate
       }
-    })
+    }
+
+    const { error } = await supabase.from('invoice_events').insert(eventRecord as any)
 
     if (error) {
       console.error('Error logging invoice event:', error)
@@ -167,7 +173,7 @@ export async function onPaymentReceived(invoiceData: InvoiceEventData): Promise<
 /**
  * Get invoice event history
  */
-export async function getInvoiceEventHistory(invoiceId: string) {
+export async function getInvoiceEventHistory(invoiceId: string): Promise<InvoiceEventRow[]> {
   try {
     const { data, error } = await supabase
       .from('invoice_events')
@@ -179,7 +185,7 @@ export async function getInvoiceEventHistory(invoiceId: string) {
       throw error
     }
 
-    return (data || []) as any[]
+    return (data || []) as InvoiceEventRow[]
   } catch (error) {
     console.error('Error fetching invoice event history:', error)
     throw error
@@ -189,7 +195,7 @@ export async function getInvoiceEventHistory(invoiceId: string) {
 /**
  * Get all invoice events for current user
  */
-export async function getUserInvoiceEvents(limit: number = 50) {
+export async function getUserInvoiceEvents(limit: number = 50): Promise<InvoiceEventRow[]> {
   try {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
@@ -206,7 +212,7 @@ export async function getUserInvoiceEvents(limit: number = 50) {
       throw error
     }
 
-    return (data || []) as any[]
+    return (data || []) as InvoiceEventRow[]
   } catch (error) {
     console.error('Error fetching user invoice events:', error)
     throw error
@@ -247,8 +253,8 @@ export async function getInvoiceLifecycleStatus(invoiceId: string) {
       totalEvents: events.length,
       totalNotifications: notifications.length,
       lastEvent: events[0] || null,
-      notificationsSent: notifications.filter(n => n.status === 'sent').length,
-      notificationsFailed: notifications.filter(n => n.status === 'failed').length,
+      notificationsSent: notifications.filter((n: { status: string }) => n.status === 'sent').length,
+      notificationsFailed: notifications.filter((n: { status: string }) => n.status === 'failed').length,
       eventTimeline: events.map((e: any) => ({
         type: e.event_type,
         timestamp: e.created_at,

@@ -21,7 +21,7 @@ export default function BitMindLanding() {
     }
   ]);
   const [walletConnected, setWalletConnected] = useState(false);
-  const [activeProposal, setActiveProposal] = useState(null);
+  const [activeProposal, setActiveProposal] = useState<any>(null);
 
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
@@ -860,7 +860,7 @@ export default function BitMindLanding() {
         💬
       </motion.button>
 
-      <style jsx global>{`
+      <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(5deg); }

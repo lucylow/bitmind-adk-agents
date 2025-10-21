@@ -1,5 +1,15 @@
+// Supabase Edge Function - Deno Runtime
+// @ts-ignore - Deno imports not recognized by standard TypeScript
 import { serve } from 'https://deno.land/std@0.203.0/http/server.ts'
+// @ts-ignore - ESM.sh imports not recognized by standard TypeScript
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.75.1'
+
+// Declare Deno global for TypeScript
+declare const Deno: {
+  env: {
+    get(key: string): string | undefined
+  }
+}
 
 interface DiscordNotificationRequest {
   invoiceId: string

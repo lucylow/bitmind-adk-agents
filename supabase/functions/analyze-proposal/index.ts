@@ -1,8 +1,17 @@
 // Supabase Edge Function for AI Proposal Analysis
 // Uses OpenAI API key stored in Supabase secrets (secure backend)
 
+// Supabase Edge Function - Deno Runtime
+// @ts-ignore - Deno imports not recognized by standard TypeScript
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { corsHeaders } from '../_shared/cors.ts';
+
+// Declare Deno global for TypeScript
+declare const Deno: {
+  env: {
+    get(key: string): string | undefined
+  }
+}
 
 serve(async (req) => {
   // Handle CORS preflight
