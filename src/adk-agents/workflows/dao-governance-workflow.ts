@@ -38,7 +38,9 @@ export class DAOGovernanceWorkflow extends Workflow {
     super('dao-governance-workflow', 'DAO Governance Analysis Workflow');
   }
 
-  async execute(input: GovernanceWorkflowInput): Promise<GovernanceWorkflowOutput> {
+  async execute(input: Record<string, unknown>): Promise<unknown> {
+    // Type assertion for internal use
+    const typedInput = input as GovernanceWorkflowInput;
     const runId = `governance-${Date.now()}`;
     console.log(`\n🚀 Starting DAO Governance Workflow ${runId}\n`);
 
@@ -119,7 +121,7 @@ export class DAOGovernanceWorkflow extends Workflow {
           ? {
               runId,
               proposalId: input.proposalId,
-              recommendation: votingRecommendationResult.output,
+              recommendation: votingRecommendationResult.content,
               timestamp: new Date(),
             }
           : undefined,

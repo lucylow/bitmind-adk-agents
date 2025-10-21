@@ -117,9 +117,13 @@ export const orchestrateResponseTool: BaseTool = {
     if (requiredAgents.includes('crossDAO')) {
       agentPromises.push(
         (async () => {
-          const agent = createCrossDAOAnalystAgent();
-          const response = await agent.run(query, context);
-          agentResponses.crossDAO = response;
+          // TODO: Implement createCrossDAOAnalystAgent
+          // const agent = createCrossDAOAnalystAgent();
+          // const response = await agent.run(query, context);
+          agentResponses.crossDAO = {
+            content: 'Cross-DAO analysis not yet implemented',
+            metadata: { tokensUsed: 0, model: 'placeholder', timestamp: Date.now() }
+          };
         })()
       );
     }
@@ -127,9 +131,13 @@ export const orchestrateResponseTool: BaseTool = {
     if (requiredAgents.includes('delegation')) {
       agentPromises.push(
         (async () => {
-          const agent = createDelegationAdvisorAgent();
-          const response = await agent.run(query, context);
-          agentResponses.delegation = response;
+          // TODO: Implement createDelegationAdvisorAgent
+          // const agent = createDelegationAdvisorAgent();
+          // const response = await agent.run(query, context);
+          agentResponses.delegation = {
+            content: 'Delegation advisor not yet implemented',
+            metadata: { tokensUsed: 0, model: 'placeholder', timestamp: Date.now() }
+          };
         })()
       );
     }
@@ -429,8 +437,9 @@ export class EnhancedCoPilotManager {
       ['summarizer', createSmartSummarizerAgent()],
       ['personalization', createPersonalizationEngineAgent()],
       ['alerts', createGovernanceAlertAgent()],
-      ['crossDAO', createCrossDAOAnalystAgent()],
-      ['delegation', createDelegationAdvisorAgent()]
+      // TODO: Implement these agents
+      // ['crossDAO', createCrossDAOAnalystAgent()],
+      // ['delegation', createDelegationAdvisorAgent()]
     ]);
   }
 

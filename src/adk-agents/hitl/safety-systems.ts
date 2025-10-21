@@ -187,20 +187,20 @@ export const requestConfirmationTool: BaseTool = {
     severity: z.enum(['info', 'warning', 'critical']).default('warning')
   }),
   execute: async ({ action, confirmationType, message, details, severity }) => {
-    const severityEmoji = {
+    const severityEmoji: Record<string, string> = {
       info: 'ℹ️',
       warning: '⚠️',
       critical: '🚨'
     };
     
     console.log('\n' + '━'.repeat(70));
-    console.log(`${severityEmoji[severity]} CONFIRMATION REQUIRED: ${action}`.padStart(45));
+    console.log(`${severityEmoji[severity as string]} CONFIRMATION REQUIRED: ${action}`.padStart(45));
     console.log('━'.repeat(70));
     console.log(`\nType: ${confirmationType}`);
     console.log(`Severity: ${severity.toUpperCase()}`);
     console.log(`\n${message}`);
     console.log(`\nDetails:`);
-    details.forEach((detail, i) => console.log(`  ${i + 1}. ${detail}`));
+    details.forEach((detail: string, i: number) => console.log(`  ${i + 1}. ${detail}`));
     console.log('\n' + '━'.repeat(70));
     console.log('Please confirm this action is correct and intentional.');
     console.log('━'.repeat(70) + '\n');
@@ -324,7 +324,7 @@ async function simulateGovernanceAction(
   state: any
 ): Promise<any> {
   // Mock simulation - in production, this would use actual simulation logic
-  const simulations: Record<ActionType, any> = {
+  const simulations: Partial<Record<ActionType, any>> = {
     [ActionType.VOTE]: {
       primary: 'Vote will be recorded on-chain',
       alternatives: ['Abstain from voting', 'Delegate voting power'],
@@ -350,6 +350,42 @@ async function simulateGovernanceAction(
       warnings: ['Execution is irreversible', 'Ensure proposal has passed quorum'],
       checks: ['Verify proposal approval status', 'Check execution parameters'],
       duration: '~2-5 minutes',
+      reversible: false
+    },
+    [ActionType.STAKE]: {
+      primary: 'Tokens will be staked in protocol',
+      alternatives: ['Stake less amount', 'Use different protocol'],
+      confidence: 0.8,
+      warnings: ['Staking may have lock-up period'],
+      checks: ['Verify protocol security', 'Check staking rewards'],
+      duration: '~1 minute',
+      reversible: false
+    },
+    [ActionType.WITHDRAW]: {
+      primary: 'Tokens will be withdrawn from protocol',
+      alternatives: ['Withdraw partial amount', 'Leave staked'],
+      confidence: 0.9,
+      warnings: ['May lose accumulated rewards'],
+      checks: ['Verify withdrawal conditions', 'Check fees'],
+      duration: '~1 minute',
+      reversible: false
+    },
+    [ActionType.PROPOSE]: {
+      primary: 'New proposal will be submitted',
+      alternatives: ['Refine proposal first', 'Seek community feedback'],
+      confidence: 0.7,
+      warnings: ['Requires proposal threshold'],
+      checks: ['Verify proposal format', 'Check minimum token requirement'],
+      duration: '~5 minutes',
+      reversible: false
+    },
+    [ActionType.CANCEL]: {
+      primary: 'Proposal will be cancelled',
+      alternatives: ['Let proposal fail naturally', 'Modify proposal'],
+      confidence: 0.85,
+      warnings: ['Only proposer can cancel'],
+      checks: ['Verify you are proposer', 'Check cancellation rules'],
+      duration: '~1 minute',
       reversible: false
     }
   };
@@ -509,7 +545,7 @@ export async function performSafetyCheck(
     checks: paramCheck.checks,
     warnings: [
       ...paramCheck.warnings,
-      ...riskAssessment.riskFactors.map(rf => rf.description)
+      ...riskAssessment.riskFactors.map((rf: RiskFactor) => rf.description)
     ],
     blockers: paramCheck.issues,
     recommendations: [
@@ -522,5 +558,6 @@ export async function performSafetyCheck(
   return result;
 }
 
-export { RiskLevel, ActionType, SafetyCheckResult };
+export { RiskLevel, ActionType };
+export type { SafetyCheckResult };
 

@@ -275,7 +275,14 @@ export async function demoCompareDelegates() {
   ];
   
   for (const delegate of delegates) {
-    const analysis = await analyzeDelegate(delegate.address);
+    // TODO: Implement analyzeDelegate function
+    // const analysis = await analyzeDelegate(delegate.address);
+    const analysis = {
+      participationRate: 0.85,
+      specializationAreas: ['DeFi', 'Treasury'],
+      communicationQuality: 0.9,
+      recommendation: 'Highly recommended'
+    };
     console.log(`\n📊 ${delegate.name}:`);
     console.log('  Participation:', (analysis.participationRate * 100).toFixed(0) + '%');
     console.log('  Specializations:', analysis.specializationAreas.join(', '));
@@ -296,10 +303,11 @@ export async function demoCompareDelegates() {
 export async function demoMultiDAOComparison() {
   console.log('\n🔄 === SCENARIO 10: MULTI-DAO GOVERNANCE COMPARISON ===\n');
   
-  const comparison = await compareDAOs(
-    ['uniswap', 'compound', 'aave'],
-    'participation'
-  );
+  // TODO: Implement compareDAOs function
+  // const comparison = await compareDAOs(['uniswap', 'compound', 'aave'], 'participation');
+  const comparison = {
+    content: 'DAO Participation Comparison: Aave leads with 12% participation rate, followed by Compound at 8% and Uniswap at 5%. Key factors include hybrid governance models, active delegation programs, and regular community engagement...'
+  };
   
   console.log('📊 DAO Participation Comparison:');
   console.log('Content:', comparison.content.substring(0, 400) + '...');
