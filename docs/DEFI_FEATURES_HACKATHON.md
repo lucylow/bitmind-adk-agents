@@ -676,7 +676,7 @@ src/components/
 
 **Team:** BitMind Contributors  
 **Project:** BitMind - Advanced DeFi Invoice Management  
-**Hackathon:** Stacks Vibe Coding Hackathon 2025  
+**Framework:** ADK-TS by IQ AI  
 **Category:** Best DeFi Project  
 
 **Links:**
@@ -705,5 +705,5 @@ BitMind represents the **future of Bitcoin-native DeFi** by solving real-world p
 
 ---
 
-*Built with 🧠 by BitMind Team | Powered by ⚡ Stacks & Bitcoin*
+*Built with 🧠 by BitMind Team | Powered by ⚡ ADK-TS & IQ AI*
 

@@ -20,11 +20,15 @@
     "adk:cli": "tsx src/adk-agents/main-agent-adk.ts",
     "adk:test": "tsx src/adk-agents/index.ts",
     "adk:demo": "tsx src/adk-agents/index.ts",
+    "adk:official": "tsx src/adk-agents/adk-demo/adk-test.ts",
     "adk:proposal-analyst": "tsx src/adk-agents/agents/proposal-analyst-adk.agent.ts",
     "adk:voting-strategist": "tsx src/adk-agents/agents/voting-strategist-adk.agent.ts",
     "adk:treasury-monitor": "tsx src/adk-agents/agents/treasury-monitor-adk.agent.ts",
     "adk:workflow": "tsx src/adk-agents/workflows/dao-governance-workflow.ts",
-    "adk:mcp-server": "tsx src/adk-agents/mcp/governance-data-server.ts"
+    "adk:mcp-server": "tsx src/adk-agents/mcp/governance-data-server.ts",
+    "dao:demo": "tsx src/dao-index.ts",
+    "dao:demo-script": "tsx demo/demo-script.ts",
+    "dao:quick": "tsx src/agents/dao-agent.ts"
   },
   "keywords": [
     "blockchain",
@@ -79,7 +83,9 @@
     "sonner": "^1.4.3",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.2",
+    "dotenv": "^16.4.5",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/node": "^20.11.25",
@@ -99,7 +105,6 @@
     "tsx": "^4.7.0",
     "typescript": "^5.4.2",
     "vite": "^5.1.6",
-    "vitest": "^2.1.9",
-    "zod": "^4.1.12"
+    "vitest": "^2.1.9"
   }
 }

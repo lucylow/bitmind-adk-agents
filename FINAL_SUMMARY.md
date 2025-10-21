@@ -277,7 +277,7 @@ Your code templates were excellent and inspired the **Stacking Yield feature**! 
 
 **🚀 Good luck with your hackathon submission!**
 
-**Built with ❤️ for the Stacks AI Hackathon**  
+**Built with ❤️ using ADK-TS by IQ AI**  
 **Unlocking Bitcoin's $1.3 Trillion Economy** ₿
 
 ---

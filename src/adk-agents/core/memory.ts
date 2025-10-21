@@ -1,89 +1,145 @@
 /**
- * ADK-TS Memory System
- * Provides short-term and long-term memory for agents
+ * Memory Management for ADK Agents
+ * Handles user preferences, voting history, and agent memory
  */
 
-import type { MemoryConfig } from './types';
+export interface MemoryEntry {
+  key: string;
+  value: any;
+  timestamp: number;
+  expiresAt?: number;
+}
 
-export class InMemoryStorage {
-  private storage: Map<string, unknown> = new Map();
-  private config?: MemoryConfig;
+export interface MemoryOptions {
+  type: 'short-term' | 'long-term';
+  maxEntries: number;
+  ttl?: number; // Time to live in milliseconds
+}
 
-  constructor(config?: MemoryConfig) {
-    this.config = config;
+export class Memory {
+  private entries: Map<string, MemoryEntry> = new Map();
+  private options: MemoryOptions;
+
+  constructor(options: MemoryOptions) {
+    this.options = options;
   }
 
-  async store(key: string, value: unknown): Promise<void> {
-    // Check max entries limit
-    if (this.config?.maxEntries && this.storage.size >= this.config.maxEntries) {
-      // Remove oldest entry (simplified - in production use proper LRU)
-      const firstKey = this.storage.keys().next().value;
-      this.storage.delete(firstKey);
-    }
-
-    this.storage.set(key, {
+  set(key: string, value: any, ttl?: number): void {
+    const entry: MemoryEntry = {
+      key,
       value,
       timestamp: Date.now(),
-    });
-  }
+      expiresAt: ttl ? Date.now() + ttl : undefined,
+    };
 
-  async retrieve(key: string): Promise<unknown> {
-    const entry = this.storage.get(key) as { value: unknown; timestamp: number } | undefined;
-    return entry?.value;
-  }
+    this.entries.set(key, entry);
 
-  async retrieveAll(): Promise<Record<string, unknown>> {
-    const result: Record<string, unknown> = {};
-    for (const [key, entry] of this.storage.entries()) {
-      result[key] = (entry as { value: unknown }).value;
+    // Enforce max entries
+    if (this.entries.size > this.options.maxEntries) {
+      const oldestKey = Array.from(this.entries.keys())[0];
+      this.entries.delete(oldestKey);
     }
-    return result;
   }
 
-  async clear(): Promise<void> {
-    this.storage.clear();
+  get(key: string): any | undefined {
+    const entry = this.entries.get(key);
+    
+    if (!entry) return undefined;
+
+    // Check expiration
+    if (entry.expiresAt && Date.now() > entry.expiresAt) {
+      this.entries.delete(key);
+      return undefined;
+    }
+
+    return entry.value;
   }
 
-  async has(key: string): Promise<boolean> {
-    return this.storage.has(key);
+  has(key: string): boolean {
+    return this.get(key) !== undefined;
   }
 
-  async delete(key: string): Promise<void> {
-    this.storage.delete(key);
+  delete(key: string): boolean {
+    return this.entries.delete(key);
   }
 
-  getSize(): number {
-    return this.storage.size;
+  clear(): void {
+    this.entries.clear();
+  }
+
+  size(): number {
+    return this.entries.size;
+  }
+
+  keys(): string[] {
+    return Array.from(this.entries.keys());
   }
 }
 
-export class UserPreferenceMemory extends InMemoryStorage {
-  async storeUserPreference(userAddress: string, preference: Record<string, unknown>): Promise<void> {
-    await this.store(`user:${userAddress}`, preference);
+export interface UserPreference {
+  riskTolerance: 'LOW' | 'MEDIUM' | 'HIGH';
+  votingStrategy: 'CONSERVATIVE' | 'BALANCED' | 'AGGRESSIVE';
+  preferredCategories?: string[];
+  totalFeedbacks?: number;
+  averageSatisfaction?: number;
+  lastFeedback?: any;
+}
+
+export interface VotingHistoryEntry {
+  proposalId: string;
+  vote: 'FOR' | 'AGAINST' | 'ABSTAIN';
+  timestamp: number;
+  confidence?: number;
+}
+
+export class UserPreferenceMemory extends Memory {
+  constructor(options: MemoryOptions) {
+    super(options);
   }
 
-  async getUserPreference(userAddress: string): Promise<Record<string, unknown>> {
-    const pref = await this.retrieve(`user:${userAddress}`);
-    return (pref as Record<string, unknown>) || {};
+  async getUserPreference(userAddress: string): Promise<UserPreference> {
+    const key = `pref:${userAddress}`;
+    const pref = this.get(key);
+    
+    if (pref) return pref;
+
+    // Default preferences
+    const defaultPref: UserPreference = {
+      riskTolerance: 'MEDIUM',
+      votingStrategy: 'BALANCED',
+      totalFeedbacks: 0,
+      averageSatisfaction: 0.5,
+    };
+
+    this.set(key, defaultPref);
+    return defaultPref;
   }
 
-  async storeVotingHistory(userAddress: string, vote: {
-    proposalId: string;
-    vote: 'FOR' | 'AGAINST' | 'ABSTAIN';
-    timestamp: number;
-  }): Promise<void> {
+  async storeUserPreference(userAddress: string, preference: UserPreference): Promise<void> {
+    const key = `pref:${userAddress}`;
+    this.set(key, preference);
+  }
+
+  async getVotingHistory(userAddress: string): Promise<VotingHistoryEntry[]> {
+    const key = `history:${userAddress}`;
+    return this.get(key) || [];
+  }
+
+  async storeVotingHistory(userAddress: string, entry: VotingHistoryEntry): Promise<void> {
+    const key = `history:${userAddress}`;
     const history = await this.getVotingHistory(userAddress);
-    history.push(vote);
-    await this.store(`voting_history:${userAddress}`, history);
+    history.push(entry);
+    
+    // Keep only last 100 entries
+    if (history.length > 100) {
+      history.shift();
+    }
+    
+    this.set(key, history);
   }
 
-  async getVotingHistory(userAddress: string): Promise<Array<{
-    proposalId: string;
-    vote: 'FOR' | 'AGAINST' | 'ABSTAIN';
-    timestamp: number;
-  }>> {
-    const history = await this.retrieve(`voting_history:${userAddress}`);
-    return (history as any[]) || [];
+  async clearUserData(userAddress: string): Promise<void> {
+    this.delete(`pref:${userAddress}`);
+    this.delete(`history:${userAddress}`);
   }
 }
-

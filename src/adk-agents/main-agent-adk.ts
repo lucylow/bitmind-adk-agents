@@ -3,8 +3,8 @@
  * Root agent that coordinates governance analysis using specialized sub-agents
  */
 
-import { AgentBuilder } from "@iqai/adk";
-import { daoTools } from "./tools/dao-tools-adk";
+import { AgentBuilder } from "./core/agent-builder";
+import { stacksBlockchainTools } from "./tools/stacks-blockchain-tools";
 import { daoGovernanceWorkflow } from "./workflows/dao-governance-adk.workflow";
 import { UserPreferences } from "./types/dao-types";
 
@@ -14,8 +14,11 @@ import { UserPreferences } from "./types/dao-types";
  */
 export const createRootGovernanceAgent = () => {
   return AgentBuilder
-    .withModel("gemini-2.0-flash-exp")
-    .withTools(daoTools)
+    .create('root-governance-agent')
+    .withName('RootGovernanceAgent')
+    .withDescription('Main DAO Governance Co-pilot agent')
+    .withModel("gemini-2.5-flash")
+    .withTools(stacksBlockchainTools)
     .withInstructions(`
 You are the BitMind DAO Governance Co-pilot, an AI assistant that helps users navigate complex DAO governance decisions.
 
@@ -171,6 +174,7 @@ export async function runGovernanceAnalysis(
 ) {
   // Default user preferences if not provided
   const defaultPreferences: UserPreferences = {
+    address: userPreferences?.address || '0x0000000000000000000000000000000000000000',
     riskTolerance: 'MEDIUM',
     votingStrategy: {
       strategy: 'BALANCED',
@@ -184,8 +188,7 @@ export async function runGovernanceAnalysis(
       votingDeadlines: true,
       executionResults: true
     },
-    watchedDAOs: [daoAddress],
-    address: '0x0000000000000000000000000000000000000000'
+    watchedDAOs: [daoAddress]
   };
 
   const preferences = { ...defaultPreferences, ...userPreferences };

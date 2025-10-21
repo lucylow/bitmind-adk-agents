@@ -14,7 +14,7 @@ export function HeroSection() {
           className="inline-flex items-center rounded-full bg-white/80 px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-gray-200 backdrop-blur-sm mb-8"
         >
           <Zap className="w-4 h-4 mr-2 text-yellow-500" />
-          🤖 Built for ADK-TS Hackathon 2025 by IQ AI
+          🤖 Powered by ADK-TS Multi-Agent Framework
         </motion.div>
 
         {/* Main Heading */}

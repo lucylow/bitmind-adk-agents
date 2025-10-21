@@ -23,7 +23,7 @@ export class ToolFactory {
       parameters: this.zodToParameters(definition.schema),
       execute: async (params: Record<string, unknown>) => {
         // Validate parameters
-        const validated = definition.schema.parse(params);
+        const validated = definition.schema.parse(params) as Record<string, unknown>;
         return definition.execute(validated);
       },
       riskLevel: definition.riskLevel || 'LOW',

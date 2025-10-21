@@ -2,7 +2,7 @@
 
 ## ✅ Implementation Status: COMPLETE
 
-All advanced DeFi features have been successfully implemented for the Stacks Vibe Coding Hackathon 2025.
+All advanced features have been successfully implemented using the ADK-TS framework.
 
 ---
 
@@ -450,7 +450,7 @@ All advanced DeFi features have been successfully implemented for the Stacks Vib
 
 ## 🙏 Acknowledgments
 
-Built with dedication for the Stacks Vibe Coding Hackathon 2025.
+Built with dedication using ADK-TS and IQ AI.
 
 **Technologies Used:**
 - **Blockchain:** Stacks, Bitcoin, Clarity
@@ -468,10 +468,10 @@ BitMind now features **7 advanced DeFi capabilities** that work together to crea
 
 ---
 
-*Built with 🧠 by BitMind Team | Powered by ⚡ Stacks & Bitcoin*
+*Built with 🧠 by BitMind Team | Powered by ⚡ ADK-TS & IQ AI*
 
 **Implementation Date:** October 13, 2025  
 **Status:** ✅ COMPLETE  
-**Hackathon:** Stacks Vibe Coding Hackathon 2025  
+**Framework:** ADK-TS by IQ AI  
 **Category:** Best DeFi Project
 

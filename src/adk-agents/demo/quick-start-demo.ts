@@ -20,15 +20,21 @@ async function example1_FullGovernanceAnalysis() {
       'proposal-001',
       '0xDAOAddress123',
       {
-        riskTolerance: 'MEDIUM',
         address: '0xUserAddress456',
+        riskTolerance: 'MEDIUM',
         votingStrategy: {
           strategy: 'BALANCED',
           delegateIfBelowThreshold: false,
           votingPowerThreshold: 0.01,
           autoVote: false,
           requiresApproval: true
-        }
+        },
+        notificationPreferences: {
+          newProposals: true,
+          votingDeadlines: true,
+          executionResults: true
+        },
+        watchedDAOs: ['0xDAOAddress123']
       }
     );
 

@@ -70,6 +70,7 @@ export interface VotingRecommendation {
 }
 
 export interface UserPreferences {
+  address: string;
   riskTolerance: 'LOW' | 'MEDIUM' | 'HIGH';
   votingStrategy: VotingStrategy;
   notificationPreferences: {

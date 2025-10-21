@@ -144,7 +144,7 @@ The NavigationBar component now:
 
 ## 🏆 Hackathon-Ready Features
 
-Perfect for Stacks Vibe Coding Hackathon 2025:
+Perfect for DAO Governance Analysis:
 
 - ✅ Professional, polished design
 - ✅ Clear value proposition
@@ -182,5 +182,5 @@ For best hackathon submission screenshots:
 
 Your landing page is production-ready and looks amazing! Perfect for impressing hackathon judges and potential users.
 
-**Built with love for the Stacks ecosystem** 🚀₿💜
+**Built with ADK-TS for intelligent DAO governance** 🤖🚀
 

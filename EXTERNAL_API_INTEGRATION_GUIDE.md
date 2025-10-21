@@ -472,5 +472,5 @@ This integration guide is part of the BitMind project. See LICENSE file for deta
 
 ---
 
-**Built with ❤️ for the Stacks community**
+**Built with ❤️ using ADK-TS framework**
 

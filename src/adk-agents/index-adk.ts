@@ -17,13 +17,16 @@ export {
 
 export {
   createVotingStrategistAgent,
-  generateVotingRecommendation
+  generateRecommendation,
+  updateUserPreferences,
+  userPreferenceMemory
 } from './agents/voting-strategist-adk.agent';
 
 export {
   createTreasuryMonitorAgent,
-  analyzeTreasuryHealth,
-  assessProposalTreasuryImpact
+  assessTreasuryHealth,
+  treasuryMonitor,
+  TreasuryMonitor
 } from './agents/treasury-monitor-adk.agent';
 
 // Workflow

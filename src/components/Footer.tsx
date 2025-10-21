@@ -47,7 +47,7 @@ export function Footer() {
         {/* Bottom */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="text-gray-400 text-sm mb-4 md:mb-0">
-            © 2025 BitMind. Built for ADK-TS Hackathon 2025 by IQ AI.
+            © 2025 BitMind. Powered by ADK-TS and IQ AI.
           </div>
           <div className="flex space-x-4">
             <a href="https://github.com" className="text-gray-400 hover:text-white transition-colors">

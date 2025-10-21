@@ -1,4 +1,4 @@
-// Mock Data Service - Comprehensive demo data for Stacks Vibe Coding Hackathon
+// Mock Data Service - Comprehensive demo data for DAO governance analysis
 import { InvoiceData, AIParsedInvoice, DAOProfile, ContractorProfile, PlatformStats } from '../types';
 
 // Platform Metrics

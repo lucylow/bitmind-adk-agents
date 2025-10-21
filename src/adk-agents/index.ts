@@ -5,8 +5,10 @@
 
 // ==================== CORE EXPORTS ====================
 export * from './core/types';
-export { AgentBuilder, Agent } from './core/agent-builder';
-export { InMemoryStorage, UserPreferenceMemory } from './core/memory';
+export { AgentBuilder } from './core/agent-builder';
+export type { Agent } from './core/agent-builder';
+export { Memory, UserPreferenceMemory } from './core/memory';
+export type { UserPreference, VotingHistoryEntry, MemoryEntry, MemoryOptions } from './core/memory';
 export { tool, ToolFactory } from './core/tool-factory';
 export { Workflow, SequentialWorkflow, ParallelWorkflow } from './core/workflow';
 
