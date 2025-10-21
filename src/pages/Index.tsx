@@ -213,24 +213,24 @@ const Index: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
-              <Link to="/governance">
-                <Card className="hover:shadow-xl transition-all cursor-pointer bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-400 hover:border-purple-600 relative overflow-hidden">
-                  <div className="absolute top-2 right-2">
-                    <Badge className="bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs">NEW</Badge>
-                  </div>
-                  <CardContent className="pt-6 text-center">
-                    <Brain className="w-12 h-12 mx-auto mb-3 text-purple-600 animate-pulse" />
-                    <h3 className="font-bold mb-2">AI Governance</h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      AI-powered proposal analysis & voting
-                    </p>
-                    <Badge variant="outline" className="text-xs bg-white">
-                      95.2% Accuracy
-                    </Badge>
-                  </CardContent>
-                </Card>
-              </Link>
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <Link to="/create">
+              <Card className="hover:shadow-xl transition-all cursor-pointer bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-400 hover:border-blue-600 relative overflow-hidden">
+                <div className="absolute top-2 right-2">
+                  <Badge className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white text-xs">CORE</Badge>
+                </div>
+                <CardContent className="pt-6 text-center">
+                  <Zap className="w-12 h-12 mx-auto mb-3 text-blue-600 animate-pulse" />
+                  <h3 className="font-bold mb-2">Auto Onboarding</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    CRM → Portal in 1 click
+                  </p>
+                  <Badge variant="outline" className="text-xs bg-white">
+                    2 weeks → 3 days
+                  </Badge>
+                </CardContent>
+              </Card>
+            </Link>
 
               <Link to="/nft-marketplace">
                 <Card className="hover:shadow-xl transition-all cursor-pointer bg-white border-2 hover:border-purple-400">
