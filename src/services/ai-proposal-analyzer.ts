@@ -327,7 +327,7 @@ export function generateMockAnalysis(
     'Community sentiment appears positive based on early voting patterns',
   ];
 
-  const recommendationEmoji = recommendation === 'FOR' ? '✅' : recommendation === 'AGAINST' ? '❌' : '⚠️';
+  const recommendationEmoji = recommendation === 'FOR' ? '✅' : (recommendation === 'AGAINST' || recommendation === 'ABSTAIN') ? (recommendation === 'AGAINST' ? '❌' : '⚠️') : '⚠️';
   const recommendationText = recommendation === 'FOR' 
     ? 'Strong proposal with clear benefits and managed risks'
     : recommendation === 'ABSTAIN'
