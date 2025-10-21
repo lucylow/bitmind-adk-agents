@@ -54,8 +54,8 @@ export class DAOGovernanceWorkflow extends Workflow {
           execute: async () => {
             console.log('  → Analyzing proposal...');
             return proposalAnalystAgentADK.run(
-              `Analyze proposal ${input.proposalId} for DAO at ${input.daoAddress}. Provide comprehensive analysis of financial impact, security risks, and community sentiment.`,
-              { proposalId: input.proposalId, daoAddress: input.daoAddress }
+              `Analyze proposal ${typedInput.proposalId} for DAO at ${typedInput.daoAddress}. Provide comprehensive analysis of financial impact, security risks, and community sentiment.`,
+              { proposalId: typedInput.proposalId, daoAddress: typedInput.daoAddress }
             );
           },
         },
@@ -63,7 +63,7 @@ export class DAOGovernanceWorkflow extends Workflow {
           name: 'Monitor Treasury',
           execute: async () => {
             console.log('  → Monitoring treasury health...');
-            return assessTreasuryHealth(input.daoAddress);
+            return assessTreasuryHealth(typedInput.daoAddress);
           },
         },
       ]);
@@ -74,13 +74,13 @@ export class DAOGovernanceWorkflow extends Workflow {
       console.log('🎯 Step 2: Generating personalized voting recommendation...');
       
       const votingRecommendationResult = await votingStrategistAgentADK.run(
-        `Generate a personalized voting recommendation for proposal ${input.proposalId} based on the analysis and user preferences.`,
+        `Generate a personalized voting recommendation for proposal ${typedInput.proposalId} based on the analysis and user preferences.`,
         {
-          proposalId: input.proposalId,
-          userAddress: input.userAddress,
+          proposalId: typedInput.proposalId,
+          userAddress: typedInput.userAddress,
           proposalAnalysis: proposalAnalysisResult,
           treasuryStatus: treasuryStatusResult,
-          userPreferences: input.userPreferences,
+          userPreferences: typedInput.userPreferences,
         }
       );
 
