@@ -1,0 +1,866 @@
+/**
+ * Delegation Advisor Feature
+ * Helps users make informed delegation decisions and optimize their governance participation
+ */
+
+import { AgentBuilder, BaseTool, Agent } from '../core/agent-builder';
+import { z } from 'zod';
+
+// Types and Interfaces
+export interface DelegateProfile {
+  address: string;
+  name?: string;
+  participationRate: number; // 0-1
+  votingPower: number;
+  proposalsVoted: number;
+  proposalsCreated: number;
+  alignmentScore?: number; // 0-1, calculated against user preferences
+  specializations: string[];
+  communicationQuality: number; // 0-1
+  responsiveness: number; // 0-1
+  riskProfile: 'conservative' | 'moderate' | 'aggressive';
+  performance: DelegatePerformance;
+}
+
+export interface DelegatePerformance {
+  participationRate: number;
+  proposalSuccessRate: number; // % of their votes that aligned with outcome
+  communicationScore: number;
+  consistencyScore: number;
+  recentActivity: number; // Proposals voted in last 30 days
+  delegatorCount: number;
+  totalDelegatedPower: number;
+}
+
+export interface DelegationRecommendation {
+  delegate: DelegateProfile;
+  matchScore: number; // 0-100
+  matchReasons: string[];
+  strengths: string[];
+  concerns: string[];
+  suggestedAmount?: number; // % of voting power to delegate
+}
+
+export interface DelegationStrategy {
+  approach: 'single' | 'diversified' | 'hybrid';
+  recommendations: DelegationRecommendation[];
+  rationale: string;
+  riskLevel: string;
+  expectedOutcome: string;
+}
+
+// Mock delegate database
+const DELEGATE_DATABASE = new Map<string, Partial<DelegateProfile>>([
+  ['delegate-001', {
+    address: 'SP2X001...ABC',
+    name: 'DeFi Expert DAO',
+    participationRate: 0.95,
+    votingPower: 5000000,
+    proposalsVoted: 142,
+    proposalsCreated: 8,
+    specializations: ['defi', 'protocol', 'treasury'],
+    communicationQuality: 0.88,
+    responsiveness: 0.92,
+    riskProfile: 'moderate'
+  }],
+  ['delegate-002', {
+    address: 'SP2X002...DEF',
+    name: 'Community Builder',
+    participationRate: 0.87,
+    votingPower: 3200000,
+    proposalsVoted: 98,
+    proposalsCreated: 15,
+    specializations: ['community', 'grants', 'governance'],
+    communicationQuality: 0.95,
+    responsiveness: 0.89,
+    riskProfile: 'conservative'
+  }],
+  ['delegate-003', {
+    address: 'SP2X003...GHI',
+    name: 'Protocol Architect',
+    participationRate: 0.91,
+    votingPower: 8500000,
+    proposalsVoted: 156,
+    proposalsCreated: 22,
+    specializations: ['protocol', 'technical', 'security'],
+    communicationQuality: 0.82,
+    responsiveness: 0.78,
+    riskProfile: 'aggressive'
+  }]
+]);
+
+// Tool: Analyze delegate performance
+export const analyzeDelegatePerformanceTool: BaseTool = {
+  name: 'analyze_delegate_performance',
+  description: 'Analyze delegate voting history and performance metrics',
+  inputSchema: z.object({
+    delegateAddress: z.string(),
+    timeframe: z.string().optional().default('90days').describe('Analysis timeframe')
+  }),
+  execute: async ({ delegateAddress, timeframe }) => {
+    const delegate = await fetchDelegateData(delegateAddress);
+    const performance = await calculatePerformanceMetrics(delegate, timeframe);
+    const riskFactors = identifyDelegateRisks(delegate, performance);
+    
+    return {
+      delegate: delegate.name || delegate.address,
+      timeframe,
+      participationRate: performance.participationRate,
+      alignmentScore: performance.proposalSuccessRate,
+      proposalSuccess: performance.proposalSuccessRate,
+      communicationQuality: performance.communicationScore,
+      specializationAreas: delegate.specializations,
+      riskFactors,
+      recentActivity: {
+        proposalsVoted: performance.recentActivity,
+        trend: performance.recentActivity > 10 ? 'active' : 'moderate'
+      },
+      delegatorMetrics: {
+        count: performance.delegatorCount,
+        totalPower: performance.totalDelegatedPower
+      },
+      recommendation: generateDelegateRecommendation(delegate, performance)
+    };
+  }
+};
+
+// Tool: Find aligned delegates
+export const findAlignedDelegatesTool: BaseTool = {
+  name: 'find_aligned_delegates',
+  description: 'Find delegates that align with user\'s voting preferences',
+  inputSchema: z.object({
+    userVotingHistory: z.array(z.any()).describe('User\'s past votes'),
+    requiredAreas: z.array(z.string()).describe('Required specialization areas'),
+    minParticipation: z.number().min(0).max(100).optional().default(80).describe('Minimum participation rate %')
+  }),
+  execute: async ({ userVotingHistory, requiredAreas, minParticipation }) => {
+    // Fetch all active delegates
+    const allDelegates = await fetchActiveDelegates();
+    
+    // Filter by participation threshold
+    const qualified = allDelegates.filter(
+      d => d.participationRate * 100 >= minParticipation
+    );
+    
+    // Calculate alignment scores
+    const scored = await Promise.all(
+      qualified.map(async delegate => {
+        const alignmentScore = await calculateAlignmentScore(
+          delegate,
+          userVotingHistory,
+          requiredAreas
+        );
+        
+        return {
+          delegate,
+          alignmentScore,
+          matchReasons: generateMatchReasons(delegate, userVotingHistory, requiredAreas)
+        };
+      })
+    );
+    
+    // Sort by alignment score
+    const sorted = scored.sort((a, b) => b.alignmentScore - a.alignmentScore);
+    
+    // Generate diversification suggestions
+    const diversification = suggestDelegateDiversification(sorted.slice(0, 10));
+    
+    return {
+      totalDelegates: allDelegates.length,
+      qualified: qualified.length,
+      topMatches: sorted.slice(0, 5).map(s => ({
+        delegate: {
+          address: s.delegate.address,
+          name: s.delegate.name,
+          specializations: s.delegate.specializations
+        },
+        alignmentScore: s.alignmentScore,
+        matchReasons: s.matchReasons
+      })),
+      diversificationSuggestions: diversification
+    };
+  }
+};
+
+// Tool: Compare delegates
+export const compareDelegatesTool: BaseTool = {
+  name: 'compare_delegates',
+  description: 'Compare multiple delegates side-by-side',
+  inputSchema: z.object({
+    delegateAddresses: z.array(z.string()).min(2).max(5).describe('2-5 delegate addresses to compare')
+  }),
+  execute: async ({ delegateAddresses }) => {
+    const delegates = await Promise.all(
+      delegateAddresses.map(addr => fetchDelegateData(addr))
+    );
+    
+    const performances = await Promise.all(
+      delegates.map(d => calculatePerformanceMetrics(d, '90days'))
+    );
+    
+    // Create comparison matrix
+    const comparison = {
+      delegates: delegates.map((d, i) => ({
+        address: d.address,
+        name: d.name,
+        participationRate: d.participationRate,
+        votingPower: d.votingPower,
+        specializations: d.specializations,
+        communicationQuality: d.communicationQuality,
+        performance: performances[i]
+      })),
+      metrics: generateComparisonMetrics(delegates, performances),
+      strengths: delegates.map(d => identifyDelegateStrengths(d)),
+      weaknesses: delegates.map(d => identifyDelegateWeaknesses(d)),
+      recommendations: generateComparisonRecommendations(delegates, performances)
+    };
+    
+    return comparison;
+  }
+};
+
+// Tool: Should I delegate?
+export const shouldDelegateTool: BaseTool = {
+  name: 'should_i_delegate',
+  description: 'Determine if delegation is appropriate for a specific proposal or in general',
+  inputSchema: z.object({
+    userId: z.string(),
+    proposal: z.any().optional().describe('Specific proposal to consider'),
+    userContext: z.object({
+      votingPower: z.number(),
+      timeAvailable: z.number().optional().describe('Time available in minutes'),
+      expertiseLevel: z.enum(['beginner', 'intermediate', 'expert']),
+      votingHistory: z.array(z.any()).optional()
+    })
+  }),
+  execute: async ({ userId, proposal, userContext }) => {
+    const shouldDelegate = evaluateDelegationNeed(userContext, proposal);
+    
+    let delegateRecommendations: any[] = [];
+    if (shouldDelegate.recommend) {
+      // Find suitable delegates for this context
+      delegateRecommendations = await findSuitableDelegates(
+        userContext,
+        proposal
+      );
+    }
+    
+    return {
+      shouldDelegate: shouldDelegate.recommend,
+      confidence: shouldDelegate.confidence,
+      reasoning: shouldDelegate.reasoning,
+      alternatives: shouldDelegate.alternatives,
+      ...(shouldDelegate.recommend && {
+        recommendedDelegates: delegateRecommendations.slice(0, 3),
+        delegationStrategy: generateDelegationStrategy(
+          userContext,
+          delegateRecommendations
+        )
+      })
+    };
+  }
+};
+
+// Tool: Monitor my delegates
+export const monitorDelegatesTool: BaseTool = {
+  name: 'monitor_delegates',
+  description: 'Monitor performance of delegates user has delegated to',
+  inputSchema: z.object({
+    userId: z.string(),
+    delegations: z.array(z.object({
+      delegateAddress: z.string(),
+      amount: z.number(),
+      since: z.string()
+    }))
+  }),
+  execute: async ({ userId, delegations }) => {
+    const monitoringResults = await Promise.all(
+      delegations.map(async d => {
+        const performance = await analyzeDelegatePerformanceTool.execute({
+          delegateAddress: d.delegateAddress,
+          timeframe: '30days'
+        });
+        
+        const alerts = checkDelegateAlerts(d, performance);
+        
+        return {
+          delegate: d.delegateAddress,
+          amount: d.amount,
+          since: d.since,
+          currentPerformance: performance,
+          alerts,
+          recommendation: generateContinuationRecommendation(performance, alerts)
+        };
+      })
+    );
+    
+    const summary = generateDelegationSummary(monitoringResults);
+    
+    return {
+      totalDelegations: delegations.length,
+      monitoring: monitoringResults,
+      summary,
+      actionItems: identifyActionItems(monitoringResults)
+    };
+  }
+};
+
+// Helper Functions
+
+async function fetchDelegateData(address: string): Promise<DelegateProfile> {
+  // Check mock database first
+  for (const [, delegate] of DELEGATE_DATABASE) {
+    if (delegate.address === address || address.includes('00')) {
+      return {
+        address: delegate.address!,
+        name: delegate.name,
+        participationRate: delegate.participationRate || 0.85,
+        votingPower: delegate.votingPower || 1000000,
+        proposalsVoted: delegate.proposalsVoted || 100,
+        proposalsCreated: delegate.proposalsCreated || 5,
+        specializations: delegate.specializations || ['general'],
+        communicationQuality: delegate.communicationQuality || 0.7,
+        responsiveness: delegate.responsiveness || 0.7,
+        riskProfile: delegate.riskProfile || 'moderate',
+        performance: {
+          participationRate: delegate.participationRate || 0.85,
+          proposalSuccessRate: 0.72,
+          communicationScore: delegate.communicationQuality || 0.7,
+          consistencyScore: 0.8,
+          recentActivity: 15,
+          delegatorCount: 45,
+          totalDelegatedPower: 2500000
+        }
+      };
+    }
+  }
+  
+  // Return default delegate
+  return {
+    address,
+    participationRate: 0.75,
+    votingPower: 500000,
+    proposalsVoted: 50,
+    proposalsCreated: 2,
+    specializations: ['general'],
+    communicationQuality: 0.65,
+    responsiveness: 0.6,
+    riskProfile: 'moderate',
+    performance: {
+      participationRate: 0.75,
+      proposalSuccessRate: 0.68,
+      communicationScore: 0.65,
+      consistencyScore: 0.75,
+      recentActivity: 10,
+      delegatorCount: 20,
+      totalDelegatedPower: 1000000
+    }
+  };
+}
+
+async function calculatePerformanceMetrics(
+  delegate: DelegateProfile,
+  timeframe: string
+): Promise<DelegatePerformance> {
+  // In production, fetch actual historical data
+  return delegate.performance;
+}
+
+function identifyDelegateRisks(
+  delegate: DelegateProfile,
+  performance: DelegatePerformance
+): string[] {
+  const risks: string[] = [];
+  
+  if (performance.participationRate < 0.7) {
+    risks.push('Below-average participation rate');
+  }
+  
+  if (performance.recentActivity < 5) {
+    risks.push('Low recent activity - may be disengaging');
+  }
+  
+  if (delegate.communicationQuality < 0.6) {
+    risks.push('Limited communication with delegators');
+  }
+  
+  if (performance.delegatorCount > 100) {
+    risks.push('High delegator count may reduce responsiveness');
+  }
+  
+  return risks;
+}
+
+function generateDelegateRecommendation(
+  delegate: DelegateProfile,
+  performance: DelegatePerformance
+): string {
+  if (performance.participationRate > 0.9 && performance.proposalSuccessRate > 0.75) {
+    return 'Highly recommended - strong performance across all metrics';
+  }
+  
+  if (performance.participationRate > 0.75) {
+    return 'Recommended - solid performance with room for growth';
+  }
+  
+  return 'Consider with caution - monitor performance closely';
+}
+
+async function fetchActiveDelegates(): Promise<DelegateProfile[]> {
+  const delegates: DelegateProfile[] = [];
+  
+  for (const [, delegateData] of DELEGATE_DATABASE) {
+    const delegate = await fetchDelegateData(delegateData.address!);
+    delegates.push(delegate);
+  }
+  
+  return delegates;
+}
+
+async function calculateAlignmentScore(
+  delegate: DelegateProfile,
+  userVotingHistory: any[],
+  requiredAreas: string[]
+): Promise<number> {
+  let score = 0.5; // Base score
+  
+  // Specialization match
+  const specializationMatch = requiredAreas.filter(
+    area => delegate.specializations.includes(area)
+  ).length;
+  
+  score += (specializationMatch / Math.max(requiredAreas.length, 1)) * 0.3;
+  
+  // Performance bonus
+  if (delegate.participationRate > 0.85) score += 0.1;
+  if (delegate.communicationQuality > 0.8) score += 0.1;
+  
+  return Math.min(1, score);
+}
+
+function generateMatchReasons(
+  delegate: DelegateProfile,
+  userVotingHistory: any[],
+  requiredAreas: string[]
+): string[] {
+  const reasons: string[] = [];
+  
+  const matchedAreas = requiredAreas.filter(
+    area => delegate.specializations.includes(area)
+  );
+  
+  if (matchedAreas.length > 0) {
+    reasons.push(`Specializes in: ${matchedAreas.join(', ')}`);
+  }
+  
+  if (delegate.participationRate > 0.85) {
+    reasons.push(`High participation rate (${(delegate.participationRate * 100).toFixed(0)}%)`);
+  }
+  
+  if (delegate.communicationQuality > 0.8) {
+    reasons.push('Excellent communication with delegators');
+  }
+  
+  if (delegate.performance.delegatorCount > 30) {
+    reasons.push(`Trusted by ${delegate.performance.delegatorCount} delegators`);
+  }
+  
+  return reasons;
+}
+
+function suggestDelegateDiversification(topDelegates: any[]): string[] {
+  const suggestions: string[] = [];
+  
+  if (topDelegates.length >= 3) {
+    suggestions.push('Consider splitting delegation across 2-3 delegates for diversification');
+    
+    const specializations = new Set<string>();
+    topDelegates.forEach(d => {
+      d.delegate.specializations.forEach((s: string) => specializations.add(s));
+    });
+    
+    if (specializations.size >= 3) {
+      suggestions.push('Top delegates cover diverse specializations - good for balanced representation');
+    }
+  }
+  
+  return suggestions;
+}
+
+function generateComparisonMetrics(
+  delegates: DelegateProfile[],
+  performances: DelegatePerformance[]
+): Record<string, any> {
+  return {
+    participationRate: {
+      values: delegates.map((d, i) => ({
+        delegate: d.name || d.address,
+        value: performances[i].participationRate
+      })),
+      best: Math.max(...performances.map(p => p.participationRate))
+    },
+    communicationQuality: {
+      values: delegates.map(d => ({
+        delegate: d.name || d.address,
+        value: d.communicationQuality
+      })),
+      best: Math.max(...delegates.map(d => d.communicationQuality))
+    },
+    votingPower: {
+      values: delegates.map(d => ({
+        delegate: d.name || d.address,
+        value: d.votingPower
+      })),
+      highest: Math.max(...delegates.map(d => d.votingPower))
+    }
+  };
+}
+
+function identifyDelegateStrengths(delegate: DelegateProfile): string[] {
+  const strengths: string[] = [];
+  
+  if (delegate.participationRate > 0.9) {
+    strengths.push('Exceptional participation');
+  }
+  
+  if (delegate.communicationQuality > 0.85) {
+    strengths.push('Strong communication');
+  }
+  
+  if (delegate.proposalsCreated > 10) {
+    strengths.push('Active proposal creator');
+  }
+  
+  if (delegate.specializations.length >= 3) {
+    strengths.push('Broad expertise');
+  }
+  
+  return strengths.length > 0 ? strengths : ['Consistent performance'];
+}
+
+function identifyDelegateWeaknesses(delegate: DelegateProfile): string[] {
+  const weaknesses: string[] = [];
+  
+  if (delegate.participationRate < 0.7) {
+    weaknesses.push('Below-average participation');
+  }
+  
+  if (delegate.communicationQuality < 0.7) {
+    weaknesses.push('Limited communication');
+  }
+  
+  if (delegate.proposalsVoted < 50) {
+    weaknesses.push('Limited voting history');
+  }
+  
+  return weaknesses.length > 0 ? weaknesses : ['Minor areas for improvement'];
+}
+
+function generateComparisonRecommendations(
+  delegates: DelegateProfile[],
+  performances: DelegatePerformance[]
+): string[] {
+  const recommendations: string[] = [];
+  
+  const bestPerformer = delegates.reduce((best, current, i) =>
+    performances[i].participationRate > performances[delegates.indexOf(best)].participationRate
+      ? current
+      : best
+  );
+  
+  recommendations.push(
+    `${bestPerformer.name || bestPerformer.address} shows highest participation - primary recommendation`
+  );
+  
+  const diverseSpecs = delegates.filter(d => d.specializations.length >= 3);
+  if (diverseSpecs.length > 0) {
+    recommendations.push('Consider delegates with diverse specializations for broader coverage');
+  }
+  
+  return recommendations;
+}
+
+function evaluateDelegationNeed(
+  userContext: any,
+  proposal?: any
+): {
+  recommend: boolean,
+  confidence: number,
+  reasoning: string[],
+  alternatives: string[]
+} {
+  const reasoning: string[] = [];
+  let recommend = false;
+  let confidence = 0.5;
+  
+  // Check expertise level
+  if (userContext.expertiseLevel === 'beginner' && proposal?.complexity === 'high') {
+    recommend = true;
+    confidence = 0.85;
+    reasoning.push('High complexity proposal may benefit from expert delegation');
+  }
+  
+  // Check time availability
+  if (userContext.timeAvailable && userContext.timeAvailable < 10 && proposal?.lengthMinutes > 30) {
+    recommend = true;
+    confidence = Math.max(confidence, 0.8);
+    reasoning.push('Limited time vs proposal complexity suggests delegation');
+  }
+  
+  // Check voting power
+  if (userContext.votingPower < 10000) {
+    recommend = true;
+    confidence = Math.max(confidence, 0.7);
+    reasoning.push('Limited voting power - delegation can amplify your voice');
+  }
+  
+  const alternatives: string[] = [];
+  if (!recommend) {
+    alternatives.push('Vote directly - you have sufficient knowledge and time');
+    alternatives.push('Review delegate votes after for learning');
+  } else {
+    alternatives.push('Research the proposal more deeply before deciding');
+    alternatives.push('Consult with community members');
+  }
+  
+  return { recommend, confidence, reasoning, alternatives };
+}
+
+async function findSuitableDelegates(
+  userContext: any,
+  proposal?: any
+): Promise<DelegationRecommendation[]> {
+  const delegates = await fetchActiveDelegates();
+  
+  // Filter and score delegates
+  const scored = delegates.map(delegate => {
+    let matchScore = 50; // Base score
+    const matchReasons: string[] = [];
+    const strengths: string[] = [];
+    const concerns: string[] = [];
+    
+    // Expertise match
+    if (proposal && delegate.specializations.includes(proposal.category)) {
+      matchScore += 20;
+      matchReasons.push(`Expert in ${proposal.category}`);
+    }
+    
+    // Performance
+    if (delegate.participationRate > 0.85) {
+      matchScore += 15;
+      strengths.push('High participation rate');
+    }
+    
+    // Communication
+    if (delegate.communicationQuality > 0.8) {
+      matchScore += 10;
+      strengths.push('Excellent communication');
+    }
+    
+    // Concerns
+    if (delegate.riskProfile !== userContext.riskTolerance) {
+      concerns.push('Different risk profile from yours');
+    }
+    
+    return {
+      delegate,
+      matchScore: Math.min(100, matchScore),
+      matchReasons,
+      strengths,
+      concerns
+    };
+  });
+  
+  return scored.sort((a, b) => b.matchScore - a.matchScore);
+}
+
+function generateDelegationStrategy(
+  userContext: any,
+  delegates: DelegationRecommendation[]
+): DelegationStrategy {
+  const topDelegates = delegates.slice(0, 3);
+  
+  let approach: 'single' | 'diversified' | 'hybrid' = 'single';
+  let rationale = 'Delegate to single expert for simplicity';
+  
+  if (userContext.votingPower > 100000) {
+    approach = 'diversified';
+    rationale = 'Split delegation across multiple experts for diversification';
+  }
+  
+  return {
+    approach,
+    recommendations: topDelegates,
+    rationale,
+    riskLevel: 'Low',
+    expectedOutcome: 'Aligned representation with minimal effort'
+  };
+}
+
+function checkDelegateAlerts(delegation: any, performance: any): string[] {
+  const alerts: string[] = [];
+  
+  if (performance.participationRate < 0.6) {
+    alerts.push('⚠️  Participation rate has dropped significantly');
+  }
+  
+  if (performance.recentActivity < 3) {
+    alerts.push('⚠️  Very low recent activity - consider reviewing delegation');
+  }
+  
+  return alerts;
+}
+
+function generateContinuationRecommendation(performance: any, alerts: string[]): string {
+  if (alerts.length > 1) {
+    return 'Consider re-evaluating this delegation';
+  }
+  
+  if (alerts.length === 1) {
+    return 'Monitor closely for improvements';
+  }
+  
+  return 'Continue delegation - performance is satisfactory';
+}
+
+function generateDelegationSummary(monitoringResults: any[]): string {
+  const totalAlerts = monitoringResults.reduce(
+    (sum, r) => sum + r.alerts.length,
+    0
+  );
+  
+  if (totalAlerts === 0) {
+    return '✅ All delegations performing well';
+  }
+  
+  if (totalAlerts <= 2) {
+    return '⚠️  Minor concerns detected - review recommendations';
+  }
+  
+  return '🔴 Multiple concerns - immediate action recommended';
+}
+
+function identifyActionItems(monitoringResults: any[]): string[] {
+  const actions: string[] = [];
+  
+  monitoringResults.forEach(result => {
+    if (result.alerts.length > 1) {
+      actions.push(`Review delegation to ${result.delegate}`);
+    }
+  });
+  
+  if (actions.length === 0) {
+    actions.push('No immediate actions required');
+  }
+  
+  return actions;
+}
+
+/**
+ * Create Delegation Advisor Agent
+ */
+export function createDelegationAdvisorAgent(): Agent {
+  return AgentBuilder
+    .create('delegation-strategist')
+    .withName('DelegationAdvisor')
+    .withDescription('Helps users make informed delegation decisions and optimize governance participation')
+    .withModel('gemini-2.5-flash')
+    .withInstruction(`
+      You help users make informed delegation decisions based on their goals and delegate performance.
+      
+      DELEGATION ANALYSIS:
+      - **Delegate Alignment**: How well delegates match user's values and preferences
+      - **Performance Metrics**: Voting participation, proposal quality, community engagement
+      - **Specialization**: Delegate expertise in specific governance areas
+      - **Transparency**: Communication quality and reasoning transparency
+      - **Track Record**: Historical performance and consistency
+      
+      RECOMMENDATION FRAMEWORK:
+      1. Understand user's goals, expertise, and constraints
+      2. Analyze delegate performance across multiple dimensions
+      3. Calculate alignment scores based on user preferences
+      4. Consider diversification vs focused delegation
+      5. Provide clear rationale for recommendations
+      
+      WHEN TO RECOMMEND DELEGATION:
+      - User lacks expertise in proposal area
+      - Limited time to properly research
+      - Low voting power (< 10k) - delegation amplifies voice
+      - Complex technical proposals requiring domain expertise
+      - User prefers passive governance participation
+      
+      WHEN TO RECOMMEND DIRECT VOTING:
+      - User has strong opinions on the issue
+      - Sufficient expertise and time available
+      - High-impact decision requiring personal judgment
+      - Building governance expertise
+      - Significant voting power that matters
+      
+      MONITORING & MAINTENANCE:
+      - Track delegate performance over time
+      - Alert on concerning changes
+      - Suggest re-evaluation when needed
+      - Celebrate delegate successes
+      
+      Always empower users to make informed choices while respecting their autonomy.
+    `)
+    .withTools([
+      analyzeDelegatePerformanceTool,
+      findAlignedDelegatesTool,
+      compareDelegatesTool,
+      shouldDelegateTool,
+      monitorDelegatesTool
+    ])
+    .withMemory({
+      type: 'long-term',
+      maxEntries: 100
+    })
+    .withTemperature(0.5) // Balanced for personalized recommendations
+    .withMaxTokens(4096)
+    .build();
+}
+
+/**
+ * Export singleton instance
+ */
+export const delegationAdvisor = createDelegationAdvisorAgent();
+
+/**
+ * Helper function for quick delegate analysis
+ */
+export async function analyzeDelegate(delegateAddress: string) {
+  return analyzeDelegatePerformanceTool.execute({
+    delegateAddress,
+    timeframe: '90days'
+  });
+}
+
+/**
+ * Usage Examples
+ */
+export const DELEGATION_ADVISOR_EXAMPLES = {
+  analyzeDelegate: `
+    const analysis = await analyzeDelegate('SP2X001...ABC');
+  `,
+  
+  findAligned: `
+    const matches = await findAlignedDelegatesTool.execute({
+      userVotingHistory: myVotes,
+      requiredAreas: ['defi', 'treasury'],
+      minParticipation: 85
+    });
+  `,
+  
+  shouldDelegate: `
+    const advice = await shouldDelegateTool.execute({
+      userId: 'user123',
+      proposal: complexProposal,
+      userContext: {
+        votingPower: 5000,
+        timeAvailable: 5,
+        expertiseLevel: 'beginner'
+      }
+    });
+  `
+};
+

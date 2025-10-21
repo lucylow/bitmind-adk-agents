@@ -1,0 +1,882 @@
+/**
+ * Cross-DAO Analytics Feature
+ * Analyzes governance patterns across multiple DAOs for comparative insights
+ */
+
+import { AgentBuilder, BaseTool, Agent } from '../core/agent-builder';
+import { z } from 'zod';
+
+// Types and Interfaces
+export interface DAOComparison {
+  daos: string[];
+  metric: string;
+  data: Record<string, any>;
+  insights: string[];
+  timestamp: Date;
+}
+
+export interface GovernanceModel {
+  daoName: string;
+  model: 'token-voting' | 'reputation' | 'multisig' | 'liquid-democracy' | 'hybrid';
+  quorumRequirement: number;
+  votingPeriod: number; // hours
+  proposalThreshold: number;
+  participationRate: number;
+  averageProposalSuccess: number;
+  strengths: string[];
+  weaknesses: string[];
+}
+
+export interface GovernanceTrend {
+  trend: string;
+  category: string;
+  confidence: number;
+  affectedDAOs: string[];
+  timeframe: string;
+  description: string;
+  implications: string[];
+}
+
+export interface BestPractice {
+  practice: string;
+  category: string;
+  originDAO: string;
+  successRate: number;
+  applicability: string[];
+  implementation: string;
+  examples: string[];
+}
+
+// Mock DAO data (in production, fetch from APIs)
+const DAO_DATABASE = new Map<string, any>([
+  ['uniswap', {
+    name: 'Uniswap',
+    model: 'token-voting',
+    treasurySize: 2500000000,
+    participationRate: 0.05,
+    avgProposalSuccess: 0.72,
+    categories: ['protocol', 'grants', 'governance']
+  }],
+  ['compound', {
+    name: 'Compound',
+    model: 'token-voting',
+    treasurySize: 800000000,
+    participationRate: 0.08,
+    avgProposalSuccess: 0.65,
+    categories: ['protocol', 'risk', 'governance']
+  }],
+  ['aave', {
+    name: 'Aave',
+    model: 'hybrid',
+    treasurySize: 600000000,
+    participationRate: 0.12,
+    avgProposalSuccess: 0.78,
+    categories: ['protocol', 'treasury', 'risk']
+  }],
+  ['gitcoin', {
+    name: 'Gitcoin',
+    model: 'liquid-democracy',
+    treasurySize: 150000000,
+    participationRate: 0.22,
+    avgProposalSuccess: 0.81,
+    categories: ['grants', 'community', 'public-goods']
+  }]
+]);
+
+// Tool: Compare governance models
+export const compareGovernanceModelsTool: BaseTool = {
+  name: 'compare_governance_models',
+  description: 'Compare governance approaches across different DAOs',
+  inputSchema: z.object({
+    daos: z.array(z.string()).describe('List of DAO names to compare'),
+    proposalType: z.string().optional().describe('Specific proposal type to analyze')
+  }),
+  execute: async ({ daos, proposalType }) => {
+    // Fetch governance data for each DAO
+    const governanceData = await Promise.all(
+      daos.map(dao => fetchDAOGovernanceData(dao))
+    );
+    
+    // Perform comparative analysis
+    const comparison = performGovernanceComparison(governanceData, proposalType);
+    
+    // Identify patterns
+    const patterns = identifySuccessfulPatterns(comparison);
+    const pitfalls = identifyCommonIssues(comparison);
+    
+    // Generate recommendations
+    const recommendations = generateAdaptationSuggestions(comparison, patterns);
+    
+    // Assess risks
+    const risks = crossDAORiskAssessment(comparison);
+    
+    return {
+      comparison,
+      successfulPatterns: patterns,
+      commonPitfalls: pitfalls,
+      adaptationRecommendations: recommendations,
+      riskFactors: risks,
+      summary: generateComparisonSummary(comparison, patterns)
+    };
+  }
+};
+
+// Tool: Predict governance trends
+export const predictGovernanceTrendsTool: BaseTool = {
+  name: 'predict_governance_trends',
+  description: 'Predict emerging governance trends based on multi-DAO data',
+  inputSchema: z.object({
+    timeframe: z.enum(['1month', '3months', '1year']).describe('Prediction timeframe'),
+    focusAreas: z.array(z.string()).optional().describe('Specific areas to analyze')
+  }),
+  execute: async ({ timeframe, focusAreas = [] }) => {
+    // Analyze historical data across DAOs
+    const trendData = await analyzeGovernanceTrends(timeframe, focusAreas);
+    
+    // Identify emerging patterns
+    const emerging = identifyEmergingPatterns(trendData);
+    
+    // Identify declining approaches
+    const declining = identifyDecliningApproaches(trendData);
+    
+    // Find opportunity areas
+    const opportunities = identifyOpportunityAreas(trendData);
+    
+    // Generate risk warnings
+    const risks = generateRiskWarnings(trendData);
+    
+    return {
+      timeframe,
+      emergingPatterns: emerging,
+      decliningApproaches: declining,
+      opportunityAreas: opportunities,
+      riskWarnings: risks,
+      confidence: calculatePredictionConfidence(trendData),
+      dataPoints: trendData.dataPointsAnalyzed
+    };
+  }
+};
+
+// Tool: Find best practices
+export const findBestPracticesTool: BaseTool = {
+  name: 'find_best_practices',
+  description: 'Find successful governance practices from other DAOs',
+  inputSchema: z.object({
+    category: z.string().describe('Category to find best practices for'),
+    currentDAO: z.string().optional().describe('Current DAO for context'),
+    minSuccessRate: z.number().optional().describe('Minimum success rate threshold')
+  }),
+  execute: async ({ category, currentDAO, minSuccessRate = 0.7 }) => {
+    // Search across DAOs for successful practices
+    const practices = await searchBestPractices(category, minSuccessRate);
+    
+    // Filter by applicability
+    const applicable = currentDAO 
+      ? filterByApplicability(practices, currentDAO)
+      : practices;
+    
+    // Rank by success rate and relevance
+    const ranked = rankPractices(applicable, category);
+    
+    // Generate implementation guidance
+    const guidance = ranked.map(practice => ({
+      ...practice,
+      implementationSteps: generateImplementationSteps(practice),
+      expectedImpact: estimateImpact(practice),
+      risks: identifyImplementationRisks(practice)
+    }));
+    
+    return {
+      category,
+      practicesFound: practices.length,
+      applicable: applicable.length,
+      topPractices: guidance.slice(0, 5),
+      learningFrom: [...new Set(practices.map(p => p.originDAO))]
+    };
+  }
+};
+
+// Tool: Analyze DAO health metrics
+export const analyzeDAOHealthMetricsTool: BaseTool = {
+  name: 'analyze_dao_health_metrics',
+  description: 'Analyze and compare health metrics across multiple DAOs',
+  inputSchema: z.object({
+    daos: z.array(z.string()),
+    metrics: z.array(z.string()).optional().describe('Specific metrics to analyze')
+  }),
+  execute: async ({ daos, metrics = ['participation', 'treasury', 'engagement'] }) => {
+    const healthData = await Promise.all(
+      daos.map(async dao => {
+        const data = await fetchDAOHealthMetrics(dao, metrics);
+        return { dao, ...data };
+      })
+    );
+    
+    // Compare metrics
+    const comparison = compareMetrics(healthData, metrics);
+    
+    // Identify leaders and laggards
+    const leaders = identifyLeaders(healthData, metrics);
+    const laggards = identifyLaggards(healthData, metrics);
+    
+    // Generate insights
+    const insights = generateHealthInsights(comparison, leaders, laggards);
+    
+    return {
+      healthData,
+      comparison,
+      leaders,
+      laggards,
+      insights,
+      recommendations: generateHealthRecommendations(comparison)
+    };
+  }
+};
+
+// Tool: Learn from similar proposals
+export const learnFromSimilarProposalsTool: BaseTool = {
+  name: 'learn_from_similar_proposals',
+  description: 'Find and analyze similar proposals from other DAOs',
+  inputSchema: z.object({
+    proposalDescription: z.string(),
+    currentDAO: z.string().optional(),
+    lookbackMonths: z.number().optional().default(12)
+  }),
+  execute: async ({ proposalDescription, currentDAO, lookbackMonths }) => {
+    // Find similar proposals across DAOs
+    const similarProposals = await findSimilarProposals(
+      proposalDescription,
+      lookbackMonths
+    );
+    
+    // Analyze outcomes
+    const outcomes = analyzeSimilarOutcomes(similarProposals);
+    
+    // Extract lessons learned
+    const lessons = extractLessonsLearned(similarProposals, outcomes);
+    
+    // Generate recommendations
+    const recommendations = generateProposalRecommendations(
+      lessons,
+      currentDAO
+    );
+    
+    return {
+      similarProposalsFound: similarProposals.length,
+      proposals: similarProposals.slice(0, 10), // Top 10
+      outcomes,
+      lessons,
+      recommendations,
+      successRate: calculateSimilarSuccessRate(outcomes)
+    };
+  }
+};
+
+// Helper Functions
+
+async function fetchDAOGovernanceData(daoName: string): Promise<GovernanceModel> {
+  const daoData = DAO_DATABASE.get(daoName.toLowerCase());
+  
+  if (!daoData) {
+    throw new Error(`DAO ${daoName} not found in database`);
+  }
+  
+  return {
+    daoName: daoData.name,
+    model: daoData.model,
+    quorumRequirement: 4, // 4% quorum
+    votingPeriod: 168, // 7 days
+    proposalThreshold: 2.5, // 2.5M tokens
+    participationRate: daoData.participationRate,
+    averageProposalSuccess: daoData.avgProposalSuccess,
+    strengths: generateStrengths(daoData),
+    weaknesses: generateWeaknesses(daoData)
+  };
+}
+
+function performGovernanceComparison(
+  governanceData: GovernanceModel[],
+  proposalType?: string
+): DAOComparison {
+  const comparison: DAOComparison = {
+    daos: governanceData.map(g => g.daoName),
+    metric: proposalType || 'overall',
+    data: {},
+    insights: [],
+    timestamp: new Date()
+  };
+  
+  // Compare key metrics
+  governanceData.forEach(gov => {
+    comparison.data[gov.daoName] = {
+      model: gov.model,
+      participationRate: gov.participationRate,
+      successRate: gov.averageProposalSuccess,
+      quorum: gov.quorumRequirement,
+      votingPeriod: gov.votingPeriod
+    };
+  });
+  
+  // Generate insights
+  comparison.insights = generateComparisonInsights(governanceData);
+  
+  return comparison;
+}
+
+function identifySuccessfulPatterns(comparison: DAOComparison): BestPractice[] {
+  const patterns: BestPractice[] = [];
+  
+  // Pattern 1: Higher participation correlates with better outcomes
+  patterns.push({
+    practice: 'Active Community Engagement',
+    category: 'participation',
+    originDAO: 'Gitcoin',
+    successRate: 0.81,
+    applicability: ['all'],
+    implementation: 'Implement delegation, regular communication, and incentives',
+    examples: ['Delegation campaigns', 'Governance calls', 'Voting incentives']
+  });
+  
+  // Pattern 2: Longer voting periods allow better decisions
+  patterns.push({
+    practice: 'Extended Voting Period',
+    category: 'process',
+    originDAO: 'Aave',
+    successRate: 0.78,
+    applicability: ['token-voting', 'hybrid'],
+    implementation: '7-day minimum voting period with snapshot',
+    examples: ['7-day voting', 'Snapshot + execution delay']
+  });
+  
+  return patterns;
+}
+
+function identifyCommonIssues(comparison: DAOComparison): string[] {
+  return [
+    'Low voter participation (< 10%) in most DAOs',
+    'Whale dominance in token-weighted voting',
+    'Voter apathy for routine proposals',
+    'Last-minute voting creates uncertainty',
+    'Lack of clear proposal guidelines'
+  ];
+}
+
+function generateAdaptationSuggestions(
+  comparison: DAOComparison,
+  patterns: BestPractice[]
+): string[] {
+  const suggestions: string[] = [];
+  
+  patterns.forEach(pattern => {
+    if (pattern.successRate > 0.75) {
+      suggestions.push(
+        `Consider adopting "${pattern.practice}" from ${pattern.originDAO} (${(pattern.successRate * 100).toFixed(0)}% success rate)`
+      );
+    }
+  });
+  
+  return suggestions;
+}
+
+function crossDAORiskAssessment(comparison: DAOComparison): string[] {
+  const risks: string[] = [];
+  
+  // Analyze participation risks
+  const avgParticipation = Object.values(comparison.data)
+    .reduce((sum: number, dao: any) => sum + dao.participationRate, 0) / 
+    Object.keys(comparison.data).length;
+  
+  if (avgParticipation < 0.1) {
+    risks.push('Industry-wide low participation may indicate governance fatigue');
+  }
+  
+  return risks;
+}
+
+function generateComparisonSummary(
+  comparison: DAOComparison,
+  patterns: BestPractice[]
+): string {
+  const daoCount = comparison.daos.length;
+  const topPatterns = patterns.slice(0, 3).map(p => p.practice).join(', ');
+  
+  return `Analyzed ${daoCount} DAOs. Key success patterns: ${topPatterns}. ${comparison.insights.length} insights generated.`;
+}
+
+async function analyzeGovernanceTrends(
+  timeframe: string,
+  focusAreas: string[]
+): Promise<any> {
+  // Mock trend analysis
+  return {
+    dataPointsAnalyzed: 500,
+    trends: [
+      {
+        name: 'Increased Delegation',
+        growth: 45,
+        confidence: 0.85
+      },
+      {
+        name: 'Shorter Voting Periods',
+        growth: -15,
+        confidence: 0.72
+      },
+      {
+        name: 'Multi-chain Governance',
+        growth: 120,
+        confidence: 0.68
+      }
+    ]
+  };
+}
+
+function identifyEmergingPatterns(trendData: any): GovernanceTrend[] {
+  return trendData.trends
+    .filter((t: any) => t.growth > 20)
+    .map((t: any) => ({
+      trend: t.name,
+      category: 'emerging',
+      confidence: t.confidence,
+      affectedDAOs: ['Multiple'],
+      timeframe: '3-6 months',
+      description: `${t.name} showing ${t.growth}% growth`,
+      implications: [`Consider adopting ${t.name} strategies`]
+    }));
+}
+
+function identifyDecliningApproaches(trendData: any): GovernanceTrend[] {
+  return trendData.trends
+    .filter((t: any) => t.growth < -10)
+    .map((t: any) => ({
+      trend: t.name,
+      category: 'declining',
+      confidence: t.confidence,
+      affectedDAOs: ['Multiple'],
+      timeframe: '3-6 months',
+      description: `${t.name} declining by ${Math.abs(t.growth)}%`,
+      implications: [`May want to reconsider ${t.name} approach`]
+    }));
+}
+
+function identifyOpportunityAreas(trendData: any): string[] {
+  return [
+    'AI-powered proposal analysis',
+    'Cross-chain governance coordination',
+    'Improved delegation UX',
+    'Governance participation incentives',
+    'Real-time treasury monitoring'
+  ];
+}
+
+function generateRiskWarnings(trendData: any): string[] {
+  return [
+    'Governance centralization risk with increasing delegation',
+    'Security concerns with multi-chain implementations',
+    'Voter fatigue from high proposal volume'
+  ];
+}
+
+function calculatePredictionConfidence(trendData: any): number {
+  const avgConfidence = trendData.trends.reduce(
+    (sum: number, t: any) => sum + t.confidence, 
+    0
+  ) / trendData.trends.length;
+  
+  return avgConfidence;
+}
+
+async function searchBestPractices(
+  category: string,
+  minSuccessRate: number
+): Promise<BestPractice[]> {
+  // Mock best practices database
+  const allPractices: BestPractice[] = [
+    {
+      practice: 'Delegate Incentive Program',
+      category: 'participation',
+      originDAO: 'Optimism',
+      successRate: 0.82,
+      applicability: ['token-voting', 'liquid-democracy'],
+      implementation: 'Reward active delegates with governance tokens',
+      examples: ['Monthly delegate rewards', 'Performance-based incentives']
+    },
+    {
+      practice: 'Proposal Templates',
+      category: 'quality',
+      originDAO: 'Compound',
+      successRate: 0.75,
+      applicability: ['all'],
+      implementation: 'Provide structured templates for proposal submission',
+      examples: ['Standard proposal format', 'Required sections checklist']
+    },
+    {
+      practice: 'Treasury Diversification',
+      category: 'treasury',
+      originDAO: 'Uniswap',
+      successRate: 0.88,
+      applicability: ['all'],
+      implementation: 'Maintain <50% treasury in native token',
+      examples: ['Multi-asset treasury', 'Stablecoin reserves']
+    }
+  ];
+  
+  return allPractices.filter(
+    p => p.category === category && p.successRate >= minSuccessRate
+  );
+}
+
+function filterByApplicability(
+  practices: BestPractice[],
+  currentDAO: string
+): BestPractice[] {
+  const daoData = DAO_DATABASE.get(currentDAO.toLowerCase());
+  if (!daoData) return practices;
+  
+  return practices.filter(
+    p => p.applicability.includes('all') || p.applicability.includes(daoData.model)
+  );
+}
+
+function rankPractices(practices: BestPractice[], category: string): BestPractice[] {
+  return practices
+    .sort((a, b) => b.successRate - a.successRate);
+}
+
+function generateImplementationSteps(practice: BestPractice): string[] {
+  return [
+    `Research ${practice.practice} implementation in ${practice.originDAO}`,
+    'Adapt to current DAO context and constraints',
+    'Create implementation proposal',
+    'Gather community feedback',
+    'Deploy and monitor results'
+  ];
+}
+
+function estimateImpact(practice: BestPractice): string {
+  if (practice.successRate > 0.8) return 'High positive impact expected';
+  if (practice.successRate > 0.7) return 'Moderate positive impact expected';
+  return 'Low to moderate impact expected';
+}
+
+function identifyImplementationRisks(practice: BestPractice): string[] {
+  return [
+    'May not translate perfectly to different DAO culture',
+    'Requires community buy-in and adoption',
+    'Implementation costs and ongoing maintenance'
+  ];
+}
+
+async function fetchDAOHealthMetrics(dao: string, metrics: string[]): Promise<any> {
+  const daoData = DAO_DATABASE.get(dao.toLowerCase());
+  
+  if (!daoData) {
+    throw new Error(`DAO ${dao} not found`);
+  }
+  
+  return {
+    participation: daoData.participationRate,
+    treasury: daoData.treasurySize,
+    engagement: daoData.participationRate * 1.2, // Mock engagement score
+    proposalQuality: daoData.avgProposalSuccess
+  };
+}
+
+function compareMetrics(healthData: any[], metrics: string[]): Record<string, any> {
+  const comparison: Record<string, any> = {};
+  
+  metrics.forEach(metric => {
+    comparison[metric] = {
+      values: healthData.map(d => ({ dao: d.dao, value: d[metric] })),
+      average: healthData.reduce((sum, d) => sum + (d[metric] || 0), 0) / healthData.length,
+      best: Math.max(...healthData.map(d => d[metric] || 0)),
+      worst: Math.min(...healthData.map(d => d[metric] || 0))
+    };
+  });
+  
+  return comparison;
+}
+
+function identifyLeaders(healthData: any[], metrics: string[]): string[] {
+  // Simple implementation: top performer in most metrics
+  const scores: Record<string, number> = {};
+  
+  healthData.forEach(dao => {
+    scores[dao.dao] = 0;
+    metrics.forEach(metric => {
+      if (dao[metric] > 0.5) scores[dao.dao]++;
+    });
+  });
+  
+  return Object.entries(scores)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 2)
+    .map(([dao]) => dao);
+}
+
+function identifyLaggards(healthData: any[], metrics: string[]): string[] {
+  const scores: Record<string, number> = {};
+  
+  healthData.forEach(dao => {
+    scores[dao.dao] = 0;
+    metrics.forEach(metric => {
+      if (dao[metric] < 0.3) scores[dao.dao]++;
+    });
+  });
+  
+  return Object.entries(scores)
+    .filter(([, score]) => score > 0)
+    .map(([dao]) => dao);
+}
+
+function generateHealthInsights(
+  comparison: Record<string, any>,
+  leaders: string[],
+  laggards: string[]
+): string[] {
+  const insights: string[] = [];
+  
+  if (leaders.length > 0) {
+    insights.push(`Top performers: ${leaders.join(', ')} - consider studying their approaches`);
+  }
+  
+  if (laggards.length > 0) {
+    insights.push(`Areas for improvement identified in: ${laggards.join(', ')}`);
+  }
+  
+  return insights;
+}
+
+function generateHealthRecommendations(comparison: Record<string, any>): string[] {
+  const recommendations: string[] = [];
+  
+  Object.entries(comparison).forEach(([metric, data]: [string, any]) => {
+    if (data.average < 0.3) {
+      recommendations.push(`Industry-wide low ${metric} - focus area for all DAOs`);
+    }
+  });
+  
+  return recommendations;
+}
+
+async function findSimilarProposals(
+  description: string,
+  lookbackMonths: number
+): Promise<any[]> {
+  // Mock similar proposals
+  return [
+    {
+      dao: 'Uniswap',
+      title: 'Treasury Diversification V2',
+      outcome: 'passed',
+      successRate: 0.85,
+      lessons: ['Clear execution timeline helped', 'Community education was key']
+    },
+    {
+      dao: 'Compound',
+      title: 'Reserve Asset Allocation',
+      outcome: 'passed',
+      successRate: 0.72,
+      lessons: ['Conservative approach preferred', 'Phased implementation recommended']
+    }
+  ];
+}
+
+function analyzeSimilarOutcomes(proposals: any[]): {
+  passed: number,
+  failed: number,
+  successRate: number
+} {
+  const passed = proposals.filter(p => p.outcome === 'passed').length;
+  const failed = proposals.filter(p => p.outcome === 'failed').length;
+  
+  return {
+    passed,
+    failed,
+    successRate: passed / (passed + failed)
+  };
+}
+
+function extractLessonsLearned(proposals: any[], outcomes: any): string[] {
+  const allLessons: string[] = [];
+  
+  proposals.forEach(p => {
+    if (p.lessons) {
+      allLessons.push(...p.lessons);
+    }
+  });
+  
+  return [...new Set(allLessons)]; // Remove duplicates
+}
+
+function generateProposalRecommendations(
+  lessons: string[],
+  currentDAO?: string
+): string[] {
+  return lessons.map(lesson => `✓ ${lesson}`);
+}
+
+function calculateSimilarSuccessRate(outcomes: any): number {
+  return outcomes.successRate;
+}
+
+function generateStrengths(daoData: any): string[] {
+  const strengths: string[] = [];
+  
+  if (daoData.participationRate > 0.15) {
+    strengths.push('High community participation');
+  }
+  
+  if (daoData.avgProposalSuccess > 0.75) {
+    strengths.push('Strong proposal quality');
+  }
+  
+  if (daoData.treasurySize > 500000000) {
+    strengths.push('Well-funded treasury');
+  }
+  
+  return strengths.length > 0 ? strengths : ['Established governance process'];
+}
+
+function generateWeaknesses(daoData: any): string[] {
+  const weaknesses: string[] = [];
+  
+  if (daoData.participationRate < 0.1) {
+    weaknesses.push('Low voter participation');
+  }
+  
+  if (daoData.avgProposalSuccess < 0.65) {
+    weaknesses.push('High proposal failure rate');
+  }
+  
+  return weaknesses.length > 0 ? weaknesses : ['Room for process optimization'];
+}
+
+function generateComparisonInsights(governanceData: GovernanceModel[]): string[] {
+  const insights: string[] = [];
+  
+  const avgParticipation = governanceData.reduce(
+    (sum, g) => sum + g.participationRate, 0
+  ) / governanceData.length;
+  
+  insights.push(
+    `Average participation rate: ${(avgParticipation * 100).toFixed(1)}%`
+  );
+  
+  const bestModel = governanceData.reduce((best, current) => 
+    current.averageProposalSuccess > best.averageProposalSuccess ? current : best
+  );
+  
+  insights.push(
+    `${bestModel.daoName}'s ${bestModel.model} model shows highest success rate (${(bestModel.averageProposalSuccess * 100).toFixed(0)}%)`
+  );
+  
+  return insights;
+}
+
+/**
+ * Create Cross-DAO Analytics Agent
+ */
+export function createCrossDAOAnalystAgent(): Agent {
+  return AgentBuilder
+    .create('cross-dao-analyst')
+    .withName('CrossDAOAnalyst')
+    .withDescription('Analyzes governance patterns across multiple DAOs for comparative insights')
+    .withModel('gemini-2.5-flash')
+    .withInstruction(`
+      You analyze governance patterns across multiple DAOs to provide comparative insights.
+      
+      CROSS-DAO ANALYSIS CAPABILITIES:
+      - **Voting Pattern Comparison**: How similar DAOs handle comparable proposals
+      - **Governance Model Analysis**: Strengths/weaknesses of different models
+      - **Trend Prediction**: Emerging governance patterns across ecosystem
+      - **Best Practices**: Successful governance strategies from top DAOs
+      - **Health Metrics**: Comparative performance analysis
+      
+      ANALYSIS APPROACH:
+      1. Collect data from multiple governance platforms
+      2. Normalize metrics for fair comparison
+      3. Identify statistically significant patterns
+      4. Extract actionable insights
+      5. Provide context-appropriate recommendations
+      
+      KEY INSIGHTS TO DELIVER:
+      - What works well in similar DAOs
+      - Common pitfalls to avoid
+      - Emerging trends to watch
+      - Adaptation strategies for different contexts
+      - Risk factors from cross-DAO perspective
+      
+      COMMUNICATION:
+      - Data-driven insights with specific examples
+      - Clear attribution to source DAOs
+      - Actionable recommendations
+      - Confidence levels for predictions
+      - Context about applicability
+      
+      Always provide comparative context to help users make informed decisions.
+    `)
+    .withTools([
+      compareGovernanceModelsTool,
+      predictGovernanceTrendsTool,
+      findBestPracticesTool,
+      analyzeDAOHealthMetricsTool,
+      learnFromSimilarProposalsTool
+    ])
+    .withMemory({
+      type: 'long-term',
+      maxEntries: 150
+    })
+    .withTemperature(0.6) // Balanced for analytical insights
+    .withMaxTokens(4096)
+    .build();
+}
+
+/**
+ * Export singleton instance
+ */
+export const crossDAOAnalyst = createCrossDAOAnalystAgent();
+
+/**
+ * Helper function for quick comparison
+ */
+export async function compareDAOs(
+  daos: string[],
+  metric?: string
+) {
+  const prompt = `
+    Compare governance approaches across these DAOs: ${daos.join(', ')}
+    ${metric ? `Focus on: ${metric}` : ''}
+    
+    Provide comprehensive comparison with insights and recommendations.
+  `;
+  
+  return crossDAOAnalyst.run(prompt, { daos, metric });
+}
+
+/**
+ * Usage Examples
+ */
+export const CROSS_DAO_ANALYTICS_EXAMPLES = {
+  compareModels: `
+    const comparison = await compareGovernanceModelsTool.execute({
+      daos: ['uniswap', 'compound', 'aave'],
+      proposalType: 'treasury'
+    });
+  `,
+  
+  predictTrends: `
+    const trends = await predictGovernanceTrendsTool.execute({
+      timeframe: '3months',
+      focusAreas: ['delegation', 'participation']
+    });
+  `,
+  
+  findBestPractices: `
+    const practices = await findBestPracticesTool.execute({
+      category: 'participation',
+      currentDAO: 'uniswap',
+      minSuccessRate: 0.75
+    });
+  `
+};
+

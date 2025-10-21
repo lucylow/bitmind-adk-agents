@@ -330,9 +330,9 @@ export function generateMockAnalysis(
   const recommendationEmoji = recommendation === 'FOR' ? '✅' : recommendation === 'AGAINST' ? '❌' : '⚠️';
   const recommendationText = recommendation === 'FOR' 
     ? 'Strong proposal with clear benefits and managed risks'
-    : recommendation === 'AGAINST'
-    ? 'Significant concerns require resolution before approval'
-    : 'Proposal has merit but needs additional review';
+    : recommendation === 'ABSTAIN'
+    ? 'Proposal has merit but needs additional review'
+    : 'Significant concerns require resolution before approval';
 
   return {
     summary: `This proposal seeks to ${lowerTitle.includes('increase') ? 'increase' : lowerTitle.includes('upgrade') ? 'upgrade' : 'implement'} ${

@@ -9,12 +9,11 @@ import {
 } from "../agents/proposal-analyst-adk.agent";
 import {
   createVotingStrategistAgent,
-  generateVotingRecommendation
+  generateRecommendation
 } from "../agents/voting-strategist-adk.agent";
 import {
   createTreasuryMonitorAgent,
-  analyzeTreasuryHealth,
-  assessProposalTreasuryImpact
+  assessTreasuryHealth
 } from "../agents/treasury-monitor-adk.agent";
 import {
   ProposalAnalysis,
