@@ -40,7 +40,7 @@ export class DAOGovernanceWorkflow extends Workflow {
 
   async execute(input: Record<string, unknown>): Promise<unknown> {
     // Type assertion for internal use
-    const typedInput = input as GovernanceWorkflowInput;
+    const typedInput = input as unknown as GovernanceWorkflowInput;
     const runId = `governance-${Date.now()}`;
     console.log(`\n🚀 Starting DAO Governance Workflow ${runId}\n`);
 
@@ -149,7 +149,7 @@ export class DAOGovernanceWorkflow extends Workflow {
         agentId: this.workflowId,
         agentName: this.workflowName,
         actionType: 'AGENT_RUN',
-        inputs: input as any,
+        inputs: typedInput as any,
         modelVersion: '1.0.0',
         status: 'FAILED',
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -157,6 +157,11 @@ export class DAOGovernanceWorkflow extends Workflow {
 
       throw error;
     }
+  }
+  
+  // Convenience method with proper types
+  async runGovernanceFlow(input: GovernanceWorkflowInput): Promise<GovernanceWorkflowOutput> {
+    return await this.execute(input as unknown as Record<string, unknown>) as GovernanceWorkflowOutput;
   }
 
   private generateExplainability(
@@ -203,7 +208,7 @@ export async function runGovernanceAnalysis(
   userAddress: string,
   userPreferences?: Record<string, unknown>
 ): Promise<GovernanceWorkflowOutput> {
-  return daoGovernanceWorkflow.execute({
+  return await daoGovernanceWorkflow.runGovernanceFlow({
     proposalId,
     daoAddress,
     userAddress,

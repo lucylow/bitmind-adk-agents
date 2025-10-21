@@ -7,7 +7,6 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, ThumbsUp, ThumbsDown, Minus, Wallet } from 'lucide-react';
 import { createDAOCopilot } from '@/adk-agents/integration/dao-copilot-api';
@@ -179,7 +178,12 @@ export const DAOProposalCard: React.FC<DAOProposalCardProps> = ({
           </div>
           <div className="flex items-center gap-2 mb-2">
             <span className="text-sm font-medium">Confidence:</span>
-            <Progress value={confidence} className="flex-1 h-2" />
+            <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-blue-600 transition-all duration-300"
+                style={{ width: `${confidence}%` }}
+              />
+            </div>
             <span className="text-sm font-medium">{confidence.toFixed(1)}%</span>
           </div>
           {analysis.approvalRequired && (
