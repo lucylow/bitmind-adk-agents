@@ -78,11 +78,12 @@ bot.command('analyze', async (ctx) => {
       { proposalId }
     );
     
+    const analyzeContent = (result as any).content || (result as any).message || 'Analysis complete';
     ctx.telegram.editMessageText(
       ctx.chat!.id,
       loadingMsg.message_id,
       undefined,
-      `📊 *Proposal Analysis: ${proposalId}*\n\n${escapeMarkdown(result.content || 'Analysis complete')}\n\n💡 _Want deeper analysis? Try /premium ${proposalId}_`,
+      `📊 *Proposal Analysis: ${proposalId}*\n\n${escapeMarkdown(analyzeContent)}\n\n💡 _Want deeper analysis? Try /premium ${proposalId}_`,
       { parse_mode: 'Markdown' }
     );
     
@@ -122,8 +123,9 @@ bot.command('premium', async (ctx) => {
     );
     
     // Check if payment required
-    if (result.requiresPayment || result.status === 402) {
-      const payment = result.payment || result;
+    const resultData = result as any;
+    if (resultData.requiresPayment || resultData.status === 402) {
+      const payment = resultData.payment || resultData;
       
       // Store session
       userSessions.set(ctx.from!.id, {
@@ -150,11 +152,12 @@ bot.command('premium', async (ctx) => {
     }
     
     // Payment already verified - show results
+    const content = resultData.content || resultData.message || 'Analysis complete';
     ctx.telegram.editMessageText(
       ctx.chat!.id,
       loadingMsg.message_id,
       undefined,
-      `💎 *Premium Analysis: ${proposalId}*\n\n${escapeMarkdown(result.content || 'Analysis complete')}`,
+      `💎 *Premium Analysis: ${proposalId}*\n\n${escapeMarkdown(content)}`,
       { parse_mode: 'Markdown' }
     );
     
@@ -189,11 +192,12 @@ bot.command('vote', async (ctx) => {
       { proposalId }
     );
     
+    const voteContent = (result as any).content || (result as any).message || 'Recommendation complete';
     ctx.telegram.editMessageText(
       ctx.chat!.id,
       loadingMsg.message_id,
       undefined,
-      `🗳️ *Vote Recommendation: ${proposalId}*\n\n${escapeMarkdown(result.content || 'Recommendation complete')}`,
+      `🗳️ *Vote Recommendation: ${proposalId}*\n\n${escapeMarkdown(voteContent)}`,
       { parse_mode: 'Markdown' }
     );
     
@@ -228,11 +232,12 @@ bot.command('treasury', async (ctx) => {
       { daoAddress }
     );
     
+    const treasuryContent = (result as any).content || (result as any).message || 'Analysis complete';
     ctx.telegram.editMessageText(
       ctx.chat!.id,
       loadingMsg.message_id,
       undefined,
-      `💰 *Treasury Analysis*\n\n${escapeMarkdown(result.content || 'Analysis complete')}`,
+      `💰 *Treasury Analysis*\n\n${escapeMarkdown(treasuryContent)}`,
       { parse_mode: 'Markdown' }
     );
     
@@ -290,8 +295,9 @@ bot.command('verify', async (ctx) => {
         { proposalId: session.proposalId, isPremium: true, verified: true }
       );
       
+      const premiumContent = (result as any).content || (result as any).message || 'Analysis complete';
       ctx.reply(
-        `💎 *Premium Analysis: ${session.proposalId}*\n\n${escapeMarkdown(result.content || 'Analysis complete')}`,
+        `💎 *Premium Analysis: ${session.proposalId}*\n\n${escapeMarkdown(premiumContent)}`,
         { parse_mode: 'Markdown' }
       );
       

@@ -26,7 +26,7 @@ interface DiscordNotificationRequest {
   userId?: string
 }
 
-serve(async (req) => {
+serve(async (req: Request) => {
   try {
     // Initialize Supabase client
     const supabase = createClient(

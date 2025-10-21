@@ -3,11 +3,12 @@
  * 
  * Official configuration for ADK CLI to discover agents, run dev server,
  * and launch web UI for BitMind DAO Governance Co-pilot
+ * 
+ * Note: Install @iqai/adk-cli first: npm install @iqai/adk-cli
  */
 
-import { defineConfig } from '@iqai/adk-cli';
-
-export default defineConfig({
+// Type-safe configuration object (compatible with defineConfig from @iqai/adk-cli)
+export default {
   // Agent discovery configuration
   agents: {
     // Directories to search for agents (CLI will auto-discover)
@@ -149,5 +150,5 @@ export default defineConfig({
       }
     }
   }
-});
+} as const;
 

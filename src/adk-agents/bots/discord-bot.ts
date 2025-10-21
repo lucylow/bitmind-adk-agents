@@ -141,8 +141,9 @@ async function handleAnalyzeCommand(message: Message) {
     });
     
     // Check if payment required (x402 response)
-    if (result.requiresPayment || result.status === 402) {
-      const payment = result.payment || result;
+    const resultData = result as any;
+    if (resultData.requiresPayment || resultData.status === 402) {
+      const payment = resultData.payment || resultData;
       
       const paymentEmbed = new EmbedBuilder()
         .setColor('#FF6600' as ColorResolvable)
@@ -169,10 +170,11 @@ async function handleAnalyzeCommand(message: Message) {
     }
     
     // Success - send analysis
+    const content = resultData.content || resultData.message || JSON.stringify(resultData);
     const analysisEmbed = new EmbedBuilder()
       .setColor('#00FF00' as ColorResolvable)
       .setTitle(`📊 ${isPremium ? 'Premium ' : ''}Analysis: Proposal #${proposalId}`)
-      .setDescription(truncateText(result.content || JSON.stringify(result), 4000))
+      .setDescription(truncateText(content, 4000))
       .setTimestamp();
     
     if (isPremium) {
@@ -207,10 +209,11 @@ async function handleVoteCommand(message: Message) {
       { proposalId }
     );
     
+    const voteContent = (result as any).content || (result as any).message || 'Analysis complete';
     const voteEmbed = new EmbedBuilder()
       .setColor('#8b5cf6' as ColorResolvable)
       .setTitle(`🗳️ Vote Recommendation: #${proposalId}`)
-      .setDescription(truncateText(result.content || 'Analysis complete', 4000))
+      .setDescription(truncateText(voteContent, 4000))
       .setTimestamp();
     
     await loadingMsg.edit({ content: '', embeds: [voteEmbed] });
@@ -241,10 +244,11 @@ async function handleTreasuryCommand(message: Message) {
       { daoAddress }
     );
     
+    const treasuryContent = (result as any).content || (result as any).message || 'Analysis complete';
     const treasuryEmbed = new EmbedBuilder()
       .setColor('#10b981' as ColorResolvable)
       .setTitle(`💰 Treasury Analysis`)
-      .setDescription(truncateText(result.content || 'Analysis complete', 4000))
+      .setDescription(truncateText(treasuryContent, 4000))
       .setTimestamp();
     
     await loadingMsg.edit({ content: '', embeds: [treasuryEmbed] });

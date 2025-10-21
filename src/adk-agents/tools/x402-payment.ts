@@ -3,9 +3,11 @@
  * 
  * Implements HTTP 402 Payment Required protocol for instant crypto micropayments
  * Works alongside ATP tokenization for flexible payment options
+ * 
+ * Note: These are plain TypeScript functions. To use with ADK agents,
+ * wrap them with the tool() function from @iqai/adk when available.
  */
 
-import { tool } from '@iqai/adk';
 import { z } from 'zod';
 import { ethers } from 'ethers';
 
@@ -45,25 +47,27 @@ export const FEATURE_PRICING = {
 } as const;
 
 /**
+ * x402 Payment Request Schema
+ */
+export const X402PaymentRequestSchema = z.object({
+  feature: z.enum([
+    'premium_analysis',
+    'cross_dao_comparison',
+    'delegation_optimization',
+    'custom_strategy',
+    'risk_modeling',
+    'predictive_analysis'
+  ]).describe('Premium feature to unlock'),
+  userAddress: z.string().describe('User wallet address'),
+  proposalId: z.string().optional().describe('Proposal ID being analyzed'),
+  customAmount: z.string().optional().describe('Custom payment amount (overrides default)')
+});
+
+/**
  * x402 Payment Tool - Request payment for premium features
  */
-export const x402PaymentTool = tool({
-  name: 'require_payment',
-  description: 'Request instant payment via x402 protocol for premium DAO governance analysis features',
-  input: z.object({
-    feature: z.enum([
-      'premium_analysis',
-      'cross_dao_comparison',
-      'delegation_optimization',
-      'custom_strategy',
-      'risk_modeling',
-      'predictive_analysis'
-    ]).describe('Premium feature to unlock'),
-    userAddress: z.string().describe('User wallet address'),
-    proposalId: z.string().optional().describe('Proposal ID being analyzed'),
-    customAmount: z.string().optional().describe('Custom payment amount (overrides default)')
-  }),
-  execute: async ({ feature, userAddress, proposalId, customAmount }) => {
+export async function requirePayment(params: z.infer<typeof X402PaymentRequestSchema>): Promise<X402PaymentRequest> {
+  const { feature, userAddress, proposalId, customAmount } = params;
     const amount = customAmount || FEATURE_PRICING[feature];
     
     // Generate unique nonce for this payment request
@@ -93,22 +97,23 @@ export const x402PaymentTool = tool({
     console.log(`[x402] Payment requested: ${amount} USDC for ${feature}`);
     
     return paymentRequest;
-  }
+}
+
+/**
+ * Payment Verification Schema
+ */
+export const PaymentVerificationSchema = z.object({
+  paymentProof: z.string().describe('X-PAYMENT header value (base64 encoded proof)'),
+  expectedAmount: z.string().describe('Expected payment amount in USDC'),
+  resource: z.string().describe('Resource being accessed'),
+  feature: z.string().describe('Feature being unlocked')
 });
 
 /**
  * Verify x402 Payment Tool
  */
-export const verifyPaymentTool = tool({
-  name: 'verify_payment',
-  description: 'Verify x402 payment proof and grant access to premium features',
-  input: z.object({
-    paymentProof: z.string().describe('X-PAYMENT header value (base64 encoded proof)'),
-    expectedAmount: z.string().describe('Expected payment amount in USDC'),
-    resource: z.string().describe('Resource being accessed'),
-    feature: z.string().describe('Feature being unlocked')
-  }),
-  execute: async ({ paymentProof, expectedAmount, resource, feature }) => {
+export async function verifyPayment(params: z.infer<typeof PaymentVerificationSchema>) {
+  const { paymentProof, expectedAmount, resource, feature } = params;
     try {
       // Parse payment proof (ERC-3009 TransferWithAuthorization signature)
       const proof = JSON.parse(Buffer.from(paymentProof, 'base64').toString('utf-8'));
@@ -144,7 +149,7 @@ export const verifyPaymentTool = tool({
       
       try {
         // Execute the receiveWithAuthorization transaction
-        const tx = await usdcWithSigner.receiveWithAuthorization(
+        const tx = await (usdcWithSigner as any).receiveWithAuthorization(
           proof.from,
           proof.to,
           proof.value,
@@ -204,20 +209,21 @@ export const verifyPaymentTool = tool({
         error: `Verification failed: ${error.message}`
       };
     }
-  }
+}
+
+/**
+ * Access Check Schema
+ */
+export const AccessCheckSchema = z.object({
+  accessToken: z.string().describe('Access token from payment verification'),
+  feature: z.string().describe('Feature to check access for')
 });
 
 /**
  * Check Payment Access Tool
  */
-export const checkPaymentAccessTool = tool({
-  name: 'check_payment_access',
-  description: 'Check if user has valid payment access to a feature',
-  input: z.object({
-    accessToken: z.string().describe('Access token from payment verification'),
-    feature: z.string().describe('Feature to check access for')
-  }),
-  execute: async ({ accessToken, feature }) => {
+export async function checkPaymentAccess(params: z.infer<typeof AccessCheckSchema>) {
+  const { accessToken, feature } = params;
     try {
       const decoded = verifyAccessToken(accessToken);
       
@@ -248,8 +254,7 @@ export const checkPaymentAccessTool = tool({
         error: error.message
       };
     }
-  }
-});
+}
 
 /**
  * Helper: Get feature description for payment request
@@ -323,11 +328,21 @@ export function formatX402Response(paymentRequest: X402PaymentRequest): {
 }
 
 /**
- * Export all x402 tools
+ * Export all x402 tools and schemas
+ * 
+ * Usage with ADK agents:
+ * import { requirePayment, verifyPayment } from './x402-payment';
+ * 
+ * Or wrap with tool() function if available:
+ * import { tool } from '@iqai/adk';
+ * export const x402PaymentTool = tool({
+ *   name: 'require_payment',
+ *   execute: requirePayment
+ * });
  */
-export const x402Tools = [
-  x402PaymentTool,
-  verifyPaymentTool,
-  checkPaymentAccessTool
-];
+export const x402Tools = {
+  requirePayment,
+  verifyPayment,
+  checkPaymentAccess
+};
 
