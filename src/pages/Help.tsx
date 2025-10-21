@@ -31,7 +31,7 @@ const Help = () => {
     {
       icon: <Bitcoin className="w-8 h-8 text-orange-600" />,
       title: "Escrow & Payment",
-      description: "Secure escrow with ADK-TS AI-agent monitoring and automated milestone payment verification.",
+      description: "Secure escrow with ADK-TS AI-Agent monitoring and automated milestone payment verification for DAO governance.",
       steps: [
         "DAO approves and funds the invoice",
         "Funds locked in smart contract escrow",
@@ -98,7 +98,7 @@ const Help = () => {
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-900 mb-4">Help & Documentation</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Everything you need to know about using BitMind for your DAO's invoice management
+            Everything you need to know about using BitMind DAO Governance Co-pilot AI-Agent - Built for ADK-TS Agents Hackathon 2025
           </p>
         </div>
 

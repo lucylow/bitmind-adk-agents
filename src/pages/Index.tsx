@@ -36,9 +36,9 @@ const Index: React.FC = () => {
               </div>
               <div className="flex flex-col">
                 <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-                  BitMindAI
+                  BitMind
                 </span>
-                <span className="text-xs text-gray-500 -mt-1 hidden sm:block">Bitcoin-native smart invoices</span>
+                <span className="text-xs text-gray-500 -mt-1 hidden sm:block">DAO Governance Co-pilot AI-Agent</span>
               </div>
             </Link>
             
@@ -108,23 +108,24 @@ const Index: React.FC = () => {
         {/* Hero Section */}
         <section className="mb-12 text-center">
           <h1 className="text-5xl font-bold mb-4 text-foreground">
-            From Chaos to Client Success in 3 Days
+            BitMind DAO Governance Co-pilot AI-Agent
           </h1>
           <p className="text-muted-foreground text-xl mb-6 max-w-3xl mx-auto">
-            Automate client onboarding for agencies, consultants & service businesses. Stop losing clients to disorganized first impressions.
+            An intelligent multi-agent system built with ADK-TS that analyzes DAO proposals, monitors treasury health, 
+            and provides personalized voting recommendations. Built for the <strong>ADK-TS Agents Hackathon 2025</strong>.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Badge variant="secondary" className="bg-green-100 text-green-800 px-4 py-2 text-sm">
-              ⏱️ 2 weeks → 3 days onboarding
+              🤖 3 Specialized ADK-TS Agents
             </Badge>
             <Badge variant="secondary" className="bg-blue-100 text-blue-800 px-4 py-2 text-sm">
-              💰 Save 5-8 hrs per client
+              ⛓️ Stacks Blockchain Integration
             </Badge>
             <Badge variant="secondary" className="bg-purple-100 text-purple-800 px-4 py-2 text-sm">
-              📈 30% more clients capacity
+              🏆 ADK-TS Hackathon 2025
             </Badge>
             <Badge variant="secondary" className="bg-orange-100 text-orange-800 px-4 py-2 text-sm">
-              🎯 Reduce 90-day churn
+              📊 Multi-Agent Workflow
             </Badge>
           </div>
           
@@ -205,11 +206,11 @@ const Index: React.FC = () => {
           <CardContent className="pt-6">
             <div className="text-center mb-6">
               <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 mb-3">
-                🏆 Advanced DeFi Features - Hackathon Special
+                🏆 ADK-TS Agents Hackathon 2025
               </Badge>
-              <h2 className="text-3xl font-bold mb-2">Next-Generation DeFi Primitives</h2>
+              <h2 className="text-3xl font-bold mb-2">Multi-Agent DAO Governance System</h2>
               <p className="text-muted-foreground">
-                Unlocking liquidity, governance, and capital efficiency for Bitcoin DAOs
+                Intelligent proposal analysis, treasury monitoring, and personalized voting recommendations powered by ADK-TS
               </p>
             </div>
 

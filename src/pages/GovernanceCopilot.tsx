@@ -179,8 +179,8 @@ export default function GovernanceCopilot() {
                 <Brain className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold text-gray-900">DAO Governance Co-pilot</h1>
-                <p className="text-gray-600 mt-1">AI-powered governance analysis & automated voting</p>
+                <h1 className="text-4xl font-bold text-gray-900">DAO Governance Co-pilot AI-Agent</h1>
+                <p className="text-gray-600 mt-1">Multi-agent system built with ADK-TS for the ADK-TS Agents Hackathon 2025</p>
               </div>
             </div>
           </div>

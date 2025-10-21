@@ -16,7 +16,7 @@ export default function BitMindLanding() {
     { 
       id: 1, 
       type: 'agent', 
-      content: "Hello! I'm your BitMind DAO Governance Co-pilot. I can analyze proposals, assess treasury risks, and provide voting recommendations. What would you like to know?", 
+      content: "Hello! I'm BitMind, your DAO Governance Co-pilot AI-Agent built with ADK-TS. I can analyze proposals, assess treasury risks, and provide personalized voting recommendations. What would you like to know?", 
       timestamp: new Date() 
     }
   ]);
@@ -207,7 +207,7 @@ export default function BitMindLanding() {
                 BM
               </div>
               <span className="text-white font-bold text-xl">BitMind</span>
-              <span className="hidden sm:inline text-xs text-gray-400 ml-2">DAO Governance Co-pilot</span>
+              <span className="hidden sm:inline text-xs text-gray-400 ml-2">DAO Governance Co-pilot AI-Agent</span>
             </motion.div>
 
             {/* Desktop Menu */}
@@ -297,7 +297,7 @@ export default function BitMindLanding() {
               transition={{ duration: 0.8 }}
             >
               <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-lg rounded-full px-4 py-2 mb-6 border border-white/20">
-                <span className="text-sm text-blue-300">🚀 Built with ADK-TS</span>
+                <span className="text-sm text-blue-300">🏆 ADK-TS Agents Hackathon 2025</span>
                 <span className="text-white/60">•</span>
                 <span className="text-sm text-green-300">Multi-Agent System</span>
               </div>
@@ -305,14 +305,14 @@ export default function BitMindLanding() {
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
                 BitMind
                 <span className="block bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mt-2">
-                  Smarter DAOs
+                  DAO Governance Co-pilot AI-Agent
                 </span>
               </h1>
 
               <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-                The AI-powered governance co-pilot that helps DAO members make informed decisions. 
-                Built with <span className="text-blue-400 font-semibold">ADK-TS</span> to deliver 
-                multi-agent intelligence for decentralized governance.
+                An intelligent multi-agent system built with <span className="text-blue-400 font-semibold">ADK-TS</span> that 
+                analyzes DAO proposals, monitors treasury health, and provides personalized voting recommendations 
+                on the Stacks blockchain. Submitted to the <span className="text-purple-400 font-semibold">ADK-TS Agents Hackathon 2025</span>.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -337,9 +337,9 @@ export default function BitMindLanding() {
               {/* Stats */}
               <div className="grid grid-cols-3 gap-8 mt-12 pt-8 border-t border-white/10">
                 {[
-                  { number: '99%', label: 'Faster Analysis' },
-                  { number: '3', label: 'MCP Servers' },
-                  { number: '4', label: 'AI Agents' }
+                  { number: '3', label: 'ADK-TS Agents' },
+                  { number: '10+', label: 'Blockchain Tools' },
+                  { number: '6', label: 'MCP Endpoints' }
                 ].map((stat, index) => (
                   <motion.div
                     key={stat.label}
@@ -482,7 +482,7 @@ export default function BitMindLanding() {
                 🗳️ Active Proposals
               </h2>
               <p className="text-xl text-gray-300">
-                Real-time governance proposals analyzed by BitMind AI agents
+                Real-time governance proposals analyzed by BitMind DAO Governance Co-pilot AI-Agent
               </p>
             </motion.div>
 
@@ -791,7 +791,7 @@ export default function BitMindLanding() {
               Ready to Transform DAO Governance?
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              Experience the future of decentralized decision-making with BitMind's AI-powered co-pilot.
+              Experience the future of decentralized decision-making with BitMind DAO Governance Co-pilot AI-Agent, built for the ADK-TS Agents Hackathon 2025.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.button
@@ -828,7 +828,7 @@ export default function BitMindLanding() {
               <span className="text-white font-bold text-lg">BitMind</span>
             </div>
             <div className="text-gray-400 text-sm text-center">
-              © 2025 BitMind - The Collective Intelligence for Smarter DAOs
+              © 2025 BitMind - DAO Governance Co-pilot AI-Agent | ADK-TS Agents Hackathon 2025
             </div>
             <div className="flex items-center space-x-6">
               {['GitHub', 'Docs', 'Discord'].map((link) => (

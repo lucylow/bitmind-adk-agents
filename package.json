@@ -1,7 +1,7 @@
 {
-  "name": "bitmind-smart-invoice-demo",
+  "name": "bitmind-dao-governance-copilot",
   "version": "1.0.0",
-  "description": "BitMind DAO Governance Co-pilot AI-agent built with ADK-TS for intelligent proposal analysis and treasury monitoring",
+  "description": "BitMind DAO Governance Co-pilot AI-Agent - Multi-agent system built with ADK-TS for intelligent proposal analysis, treasury monitoring, and personalized voting recommendations. ADK-TS Agents Hackathon 2025.",
   "type": "module",
   "scripts": {
     "dev": "vite",
