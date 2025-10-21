@@ -36,8 +36,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom'],
-    exclude: ['@supabase/supabase-js'],
+    include: ['react', 'react-dom', '@supabase/supabase-js'],
   },
   base: './',
 });

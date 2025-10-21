@@ -271,128 +271,42 @@ export type Database = {
           },
         ]
       }
-      notifications: {
+      user_roles: {
         Row: {
+          created_at: string | null
           id: string
-          invoice_id: number
-          user_id: string | null
-          type: string
-          channel: string
-          recipient: string
-          status: string
-          payload: Json | null
-          sent_at: string | null
-          error_message: string | null
-          created_at: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
         }
         Insert: {
+          created_at?: string | null
           id?: string
-          invoice_id: number
-          user_id?: string | null
-          type: string
-          channel: string
-          recipient: string
-          status?: string
-          payload?: Json | null
-          sent_at?: string | null
-          error_message?: string | null
-          created_at?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
         }
         Update: {
+          created_at?: string | null
           id?: string
-          invoice_id?: number
-          user_id?: string | null
-          type?: string
-          channel?: string
-          recipient?: string
-          status?: string
-          payload?: Json | null
-          sent_at?: string | null
-          error_message?: string | null
-          created_at?: string
-        }
-        Relationships: []
-      }
-      api_integrations: {
-        Row: {
-          id: string
-          user_id: string | null
-          service: string
-          api_key_encrypted: string | null
-          config: Json | null
-          is_active: boolean
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id?: string | null
-          service: string
-          api_key_encrypted?: string | null
-          config?: Json | null
-          is_active?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string | null
-          service?: string
-          api_key_encrypted?: string | null
-          config?: Json | null
-          is_active?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      invoice_events: {
-        Row: {
-          id: string
-          invoice_id: number
-          event_type: string
-          tx_id: string | null
-          block_height: number | null
-          payload: Json | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          invoice_id: number
-          event_type: string
-          tx_id?: string | null
-          block_height?: number | null
-          payload?: Json | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          invoice_id?: number
-          event_type?: string
-          tx_id?: string | null
-          block_height?: number | null
-          payload?: Json | null
-          created_at?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
     }
     Views: {
-      notification_stats: {
-        Row: {
-          user_id: string | null
-          channel: string | null
-          status: string | null
-          count: number | null
-          last_sent: string | null
-        }
-      }
+      [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -519,6 +433,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
