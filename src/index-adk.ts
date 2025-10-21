@@ -64,11 +64,11 @@ app.post('/api/analyze', async (req, res) => {
       data: result
     });
     
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('[API] Analysis error:', error);
     res.status(500).json({ 
       success: false,
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     });
   }
 });
@@ -90,11 +90,11 @@ app.get('/api/treasury/:daoAddress', async (req, res) => {
       data: result
     });
     
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('[API] Treasury monitoring error:', error);
     res.status(500).json({ 
       success: false,
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     });
   }
 });
@@ -127,11 +127,11 @@ app.post('/api/analyze-batch', async (req, res) => {
       data: results
     });
     
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('[API] Batch analysis error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     });
   }
 });

@@ -11,6 +11,12 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  // NOTE: ProtectedRoute is now deprecated - all routes are open access
+  // Wallet connection is only required for actual transactions
+  // This component now just passes through children
+  return <>{children}</>;
+  
+  /* DEPRECATED WALLET GATE - KEPT FOR REFERENCE
   const { isConnected } = useWalletStore();
 
   if (!isConnected) {
@@ -69,6 +75,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   return <>{children}</>;
+  */ // END DEPRECATED CODE
 };
 
 export default ProtectedRoute;

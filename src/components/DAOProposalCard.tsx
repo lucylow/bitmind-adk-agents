@@ -77,7 +77,13 @@ export const DAOProposalCard: React.FC<DAOProposalCardProps> = ({
 
   const castVote = async (support: 'for' | 'against' | 'abstain') => {
     if (!walletAddress) {
-      alert('Please connect your wallet first');
+      // Prompt user to connect wallet for transaction
+      const shouldConnect = window.confirm(
+        'Wallet connection required to cast vote on-chain.\n\nWould you like to connect your wallet now?'
+      );
+      if (shouldConnect) {
+        await connectWallet();
+      }
       return;
     }
 

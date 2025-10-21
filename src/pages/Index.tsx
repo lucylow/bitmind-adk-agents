@@ -187,7 +187,7 @@ const Index: React.FC = () => {
                   <div className="flex items-center justify-center gap-3 mb-2">
                     <Wallet className="w-5 h-5 text-blue-600" />
                     <p className="text-sm text-gray-700">
-                      <strong>Demo Mode Active:</strong> Explore features with mock data. Connect your wallet to create real invoices and interact with smart contracts.
+                      <strong>Explore Freely:</strong> View all features and analyze proposals. Connect your wallet only when ready to vote or create transactions.
                     </p>
                   </div>
                 </CardContent>

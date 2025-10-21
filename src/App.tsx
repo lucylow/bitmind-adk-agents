@@ -46,12 +46,12 @@ const App = () => (
           <Route path="/interactive-demo" element={<InteractiveDemo />} />
           <Route path="/governance" element={<GovernanceCopilot />} />
           
-          {/* Protected Dashboard and Features */}
-          <Route path="/app" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/invoices" element={<ProtectedRoute><InvoiceManager /></ProtectedRoute>} />
-          <Route path="/create" element={<ProtectedRoute><CreateInvoice /></ProtectedRoute>} />
-          <Route path="/invoice/:id" element={<ProtectedRoute><InvoiceDetails /></ProtectedRoute>} />
+          {/* All Features - Open Access (wallet required only for transactions) */}
+          <Route path="/app" element={<Index />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/invoices" element={<InvoiceManager />} />
+          <Route path="/create" element={<CreateInvoice />} />
+          <Route path="/invoice/:id" element={<InvoiceDetails />} />
           
           {/* Public Info Routes */}
           <Route path="/help" element={<Help />} />
@@ -61,14 +61,14 @@ const App = () => (
           <Route path="/supabase-test" element={<SupabaseTest />} />
           <Route path="/realtime-monitor" element={<RealtimeMonitor />} />
           
-          {/* Advanced DeFi Feature Routes - Protected */}
-          <Route path="/nft-marketplace" element={<ProtectedRoute><NFTMarketplace /></ProtectedRoute>} />
-          <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
-          <Route path="/yield-optimizer" element={<ProtectedRoute><YieldOptimizerPage /></ProtectedRoute>} />
-          <Route path="/cross-chain-swap" element={<ProtectedRoute><CrossChainSwapPage /></ProtectedRoute>} />
-          <Route path="/treasury" element={<ProtectedRoute><Treasury /></ProtectedRoute>} />
-          <Route path="/invoice-editor" element={<ProtectedRoute><InvoiceEditorPage /></ProtectedRoute>} />
-          <Route path="/discord-notifications" element={<ProtectedRoute><DiscordNotifications /></ProtectedRoute>} />
+          {/* Advanced Features - Open Access */}
+          <Route path="/nft-marketplace" element={<NFTMarketplace />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/yield-optimizer" element={<YieldOptimizerPage />} />
+          <Route path="/cross-chain-swap" element={<CrossChainSwapPage />} />
+          <Route path="/treasury" element={<Treasury />} />
+          <Route path="/invoice-editor" element={<InvoiceEditorPage />} />
+          <Route path="/discord-notifications" element={<DiscordNotifications />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

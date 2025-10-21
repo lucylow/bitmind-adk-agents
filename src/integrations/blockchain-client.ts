@@ -1,5 +1,5 @@
 // src/integrations/blockchain-client.ts
-import { ethers } from "ethers";
+import { ethers, JsonRpcProvider } from "ethers";
 import { request, gql } from "graphql-request";
 
 /**
@@ -15,12 +15,12 @@ export interface BlockchainConfig {
 }
 
 export class BlockchainClient {
-  private provider: ethers.providers.JsonRpcProvider;
+  private provider: JsonRpcProvider;
   private config: BlockchainConfig;
 
   constructor(config: BlockchainConfig) {
     this.config = config;
-    this.provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
+    this.provider = new JsonRpcProvider(config.rpcUrl);
   }
 
   /**
@@ -55,9 +55,9 @@ export class BlockchainClient {
     `;
 
     try {
-      const data = await request(this.config.subgraphUrl, query, { id: proposalId });
+      const data = await request(this.config.subgraphUrl, query, { id: proposalId }) as { proposal: any };
       return data.proposal;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error fetching from subgraph:", error);
       throw error;
     }
@@ -93,9 +93,9 @@ export class BlockchainClient {
     `;
 
     try {
-      const data = await request(snapshotUrl, query, { id: proposalId });
+      const data = await request(snapshotUrl, query, { id: proposalId }) as { proposal: any };
       return data.proposal;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error fetching from Snapshot:", error);
       throw error;
     }
@@ -119,7 +119,7 @@ export class BlockchainClient {
       if (blockNumber) {
         try {
           const votes = await tokenContract.getPriorVotes(voterAddress, blockNumber);
-          return parseFloat(ethers.utils.formatUnits(votes, 18));
+          return parseFloat(ethers.formatUnits(votes, 18));
         } catch {
           // Fallback to current votes or balance
         }
@@ -127,13 +127,13 @@ export class BlockchainClient {
 
       try {
         const votes = await tokenContract.getCurrentVotes(voterAddress);
-        return parseFloat(ethers.utils.formatUnits(votes, 18));
+        return parseFloat(ethers.formatUnits(votes, 18));
       } catch {
         // Fallback to simple balance
         const balance = await tokenContract.balanceOf(voterAddress);
-        return parseFloat(ethers.utils.formatUnits(balance, 18));
+        return parseFloat(ethers.formatUnits(balance, 18));
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error fetching voting power:", error);
       return 0;
     }
@@ -149,7 +149,7 @@ export class BlockchainClient {
       const balances = [
         {
           token: "ETH",
-          balance: ethers.utils.formatEther(ethBalance),
+          balance: ethers.formatEther(ethBalance),
           symbol: "ETH",
         },
       ];
@@ -167,7 +167,7 @@ export class BlockchainClient {
         try {
           const contract = new ethers.Contract(token.address, tokenAbi, this.provider);
           const balance = await contract.balanceOf(treasuryAddress);
-          const formatted = ethers.utils.formatUnits(balance, token.decimals);
+          const formatted = ethers.formatUnits(balance, token.decimals);
           if (parseFloat(formatted) > 0) {
             balances.push({
               token: token.address,
@@ -181,7 +181,7 @@ export class BlockchainClient {
       }
 
       return balances;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error fetching treasury balances:", error);
       return [];
     }
@@ -256,9 +256,10 @@ export function createBlockchainClient(network: "mainnet" | "goerli" | "sepolia"
     sepolia: {
       rpcUrl: process.env.SEPOLIA_RPC_URL || "https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY",
     },
-    custom: customConfig || { rpcUrl: "" },
+    custom: { rpcUrl: customConfig?.rpcUrl || "" },
   };
 
-  return new BlockchainClient({ ...configs[network], ...customConfig });
+  const finalConfig: BlockchainConfig = { ...configs[network], ...customConfig };
+  return new BlockchainClient(finalConfig);
 }
 

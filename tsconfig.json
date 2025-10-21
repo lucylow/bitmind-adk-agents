@@ -38,10 +38,17 @@
     "**/*.test.ts",
     "**/*.js",
     "**/*.jsx",
+    "**/*.backup",
     "src/dao-index.ts",
     "src/adk-agents/**",
     "src/tools/**",
-    "src/workflows/**"
+    "src/workflows/**",
+    "src/agents-old/**",
+    "src/tools-old/**",
+    "src/workflows-old/**",
+    "src/api/human-approval.ts",
+    "src/guardrail-manager.ts",
+    "src/index-adk.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
