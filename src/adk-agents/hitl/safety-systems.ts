@@ -24,7 +24,7 @@ export const verifyParametersTool: BaseTool = {
   description: 'Double-check critical parameters and confirm with user if uncertain',
   inputSchema: z.object({
     action: z.nativeEnum(ActionType),
-    parameters: z.record(z.any()),
+    parameters: z.record(z.string(), z.any()),
     expectedOutcome: z.string(),
     riskFactors: z.array(z.string())
   }),
@@ -224,7 +224,7 @@ export const assessComprehensiveRiskTool: BaseTool = {
   description: 'Perform comprehensive risk assessment for governance action',
   inputSchema: z.object({
     action: z.nativeEnum(ActionType),
-    parameters: z.record(z.any()),
+    parameters: z.record(z.string(), z.any()),
     context: z.any().optional()
   }),
   execute: async ({ action, parameters, context }) => {

@@ -314,7 +314,7 @@ export const ApprovalRequestSchema = z.object({
   action: z.nativeEnum(ActionType),
   riskLevel: z.nativeEnum(RiskLevel),
   actionDescription: z.string(),
-  parameters: z.record(z.any()),
+  parameters: z.record(z.string(), z.any()),
   reasoning: z.string(),
   risks: z.array(z.string()),
   benefits: z.array(z.string()),

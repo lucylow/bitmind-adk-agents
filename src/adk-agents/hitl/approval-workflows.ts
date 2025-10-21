@@ -168,12 +168,12 @@ export const requestHumanApprovalTool: BaseTool = {
     
     if (benefits.length > 0) {
       console.log(`\n✅ Benefits:`);
-      benefits.forEach(benefit => console.log(`   • ${benefit}`));
+      benefits.forEach((benefit: string) => console.log(`   • ${benefit}`));
     }
     
     if (alternatives.length > 0) {
       console.log(`\n🔄 Alternatives:`);
-      alternatives.forEach((alt, i) => console.log(`   ${i + 1}. ${alt}`));
+      alternatives.forEach((alt: string, i: number) => console.log(`   ${i + 1}. ${alt}`));
     }
     
     console.log(`\n📊 Parameters:`);
