@@ -8,8 +8,8 @@ import { z } from 'zod';
 import { createSmartSummarizerAgent } from '../features/smart-summarizer';
 import { createPersonalizationEngineAgent } from '../features/personalization-engine';
 import { createGovernanceAlertAgent } from '../features/governance-alerts';
-import { createCrossDAOAnalystAgent } from '../features/cross-dao-analytics';
-import { createDelegationAdvisorAgent } from '../features/delegation-advisor';
+import { crossDAOAnalytics } from '../features/cross-dao-analytics';
+import { delegationAdvisor } from '../features/delegation-advisor';
 
 // Co-pilot interaction modes
 export type InteractionMode = 'quick' | 'analysis' | 'learning' | 'strategy';

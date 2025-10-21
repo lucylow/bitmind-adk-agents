@@ -331,8 +331,3 @@ export const ApprovalRequestSchema = z.object({
   decisionBy: z.enum(['user', 'timeout', 'auto']).optional()
 });
 
-/**
- * Type exports
- */
-export type { HITLConfig, ApprovalRequest, DecisionContext, RiskAssessment, SafetyCheckResult };
-

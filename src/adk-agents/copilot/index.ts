@@ -54,36 +54,16 @@ export {
   type MonitoringConfig
 } from '../features/governance-alerts';
 
-// Cross-DAO Analytics
+// Cross-DAO Analytics (coming soon)
 export {
-  createCrossDAOAnalystAgent,
-  crossDAOAnalyst,
-  compareDAOs,
-  compareGovernanceModelsTool,
-  predictGovernanceTrendsTool,
-  findBestPracticesTool,
-  analyzeDAOHealthMetricsTool,
-  learnFromSimilarProposalsTool,
-  type DAOComparison,
-  type GovernanceModel,
-  type GovernanceTrend,
-  type BestPractice
+  crossDAOAnalytics,
+  type CrossDAOAnalytics
 } from '../features/cross-dao-analytics';
 
-// Delegation Advisor
+// Delegation Advisor (coming soon)
 export {
-  createDelegationAdvisorAgent,
   delegationAdvisor,
-  analyzeDelegate,
-  analyzeDelegatePerformanceTool,
-  findAlignedDelegatesTool,
-  compareDelegatesTool,
-  shouldDelegateTool,
-  monitorDelegatesTool,
-  type DelegateProfile,
-  type DelegatePerformance,
-  type DelegationRecommendation,
-  type DelegationStrategy
+  type DelegationAdvisor
 } from '../features/delegation-advisor';
 
 /**

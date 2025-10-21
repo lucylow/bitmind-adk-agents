@@ -7,8 +7,8 @@ import { coPilotManager, askCoPilot } from '../copilot/enhanced-copilot';
 import { smartSummarizer, summarizeProposal } from '../features/smart-summarizer';
 import { personalizationEngine, getPersonalizedGuidance } from '../features/personalization-engine';
 import { governanceAlertSystem, setupUserMonitoring } from '../features/governance-alerts';
-import { crossDAOAnalyst, compareDAOs } from '../features/cross-dao-analytics';
-import { delegationAdvisor, analyzeDelegate } from '../features/delegation-advisor';
+import { crossDAOAnalytics } from '../features/cross-dao-analytics';
+import { delegationAdvisor } from '../features/delegation-advisor';
 
 // Demo data
 const DEMO_PROPOSAL = {

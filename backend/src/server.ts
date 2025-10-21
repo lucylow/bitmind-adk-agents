@@ -1,172 +1,249 @@
+// backend/src/server.ts
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 import compression from 'compression';
-import morgan from 'morgan';
-import { config } from './config';
-import { errorHandler } from './middleware/errorHandler';
-import { requestLogger } from './middleware/requestLogger';
-import { authMiddleware } from './middleware/auth';
-import { invoiceRoutes } from './routes/invoices';
-import { aiRoutes } from './routes/ai';
-import { webhookRoutes } from './routes/webhooks';
-import { healthRoutes } from './routes/health';
-import { PrismaClient } from '@prisma/client';
-import { StacksService } from './services/stacks';
-import { AIService } from './services/ai';
-import { IPFSService } from './services/ipfs';
+import { createServer } from 'http';
+import { Server as SocketServer } from 'socket.io';
+import mongoose from 'mongoose';
+import { env, validateEnv } from './config/env.js';
+import agentRoutes from './api/routes/agent.js';
+import { setupWebSocket } from './websocket/socketHandler.js';
+import { agentService } from './services/AgentService.js';
 
-export class Server {
-  public app: express.Application;
-  public prisma: PrismaClient;
-  public stacksService: StacksService;
-  public aiService: AIService;
-  public ipfsService: IPFSService;
+// Validate environment variables
+if (!validateEnv()) {
+  console.error('❌ Environment validation failed. Exiting...');
+  process.exit(1);
+}
 
-  constructor() {
-    this.app = express();
-    this.prisma = new PrismaClient();
-    this.stacksService = new StacksService();
-    this.aiService = new AIService();
-    this.ipfsService = new IPFSService();
-    
-    this.initializeMiddleware();
-    this.initializeRoutes();
-    this.initializeErrorHandling();
-  }
+const app = express();
+const server = createServer(app);
 
-  private async initializeServices(): Promise<void> {
-    try {
-      // Test database connection
-      await this.prisma.$connect();
-      console.log('✅ Database connected successfully');
+// Socket.IO setup with CORS
+const io = new SocketServer(server, {
+  cors: {
+    origin: env.CORS_ORIGIN,
+    methods: ['GET', 'POST'],
+    credentials: true
+  },
+  pingTimeout: 60000,
+  pingInterval: 25000
+});
 
-      // Initialize Stacks service
-      await this.stacksService.initialize();
-      console.log('✅ Stacks service initialized');
+// Middleware
+app.use(helmet({
+  contentSecurityPolicy: env.NODE_ENV === 'production'
+}));
+app.use(compression());
+app.use(cors({
+  origin: env.CORS_ORIGIN,
+  credentials: true
+}));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-      // Initialize AI service
-      await this.aiService.initialize();
-      console.log('✅ AI service initialized');
+// Request logging in development
+if (env.NODE_ENV === 'development') {
+  app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} ${req.method} ${req.path}`);
+    next();
+  });
+}
 
-    } catch (error) {
-      console.error('❌ Service initialization failed:', error);
-      process.exit(1);
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+    environment: env.NODE_ENV,
+    services: {
+      database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+      agents: agentService ? 'initialized' : 'not initialized'
     }
-  }
+  });
+});
 
-  private initializeMiddleware(): void {
-    // Security middleware
-    this.app.use(helmet({
-      crossOriginResourcePolicy: { policy: "cross-origin" }
-    }));
+// API version endpoint
+app.get('/api/version', (req, res) => {
+  res.json({
+    version: '1.0.0',
+    apiVersion: 'v1',
+    adkVersion: '0.1.0',
+    name: 'DAO Governance Co-pilot API'
+  });
+});
 
-    // CORS configuration
-    this.app.use(cors({
-      origin: config.cors.origins,
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Wallet-Address']
-    }));
+// API Routes
+app.use('/api/agent', agentRoutes);
 
-    // Rate limiting
-    const limiter = rateLimit({
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 100, // limit each IP to 100 requests per windowMs
-      message: {
-        error: 'Too many requests from this IP, please try again later.'
-      }
+// WebSocket setup
+const wsHelpers = setupWebSocket(io);
+
+// Make WebSocket helpers available to routes
+app.locals.ws = wsHelpers;
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    error: 'Endpoint not found',
+    path: req.originalUrl,
+    method: req.method
+  });
+});
+
+// Error handling middleware
+app.use((error: any, req: any, res: any, next: any) => {
+  console.error('❌ Unhandled error:', error);
+
+  const status = error.status || error.statusCode || 500;
+  const message = error.message || 'Internal server error';
+
+  res.status(status).json({
+    success: false,
+    error: message,
+    ...(env.NODE_ENV === 'development' && {
+      stack: error.stack,
+      details: error
+    })
+  });
+});
+
+/**
+ * Connect to MongoDB
+ */
+async function connectDatabase() {
+  try {
+    await mongoose.connect(env.MONGODB_URI);
+    console.log('✅ Connected to MongoDB');
+
+    mongoose.connection.on('error', (error) => {
+      console.error('❌ MongoDB error:', error);
     });
-    this.app.use(limiter);
 
-    // API-specific rate limiting
-    const aiLimiter = rateLimit({
-      windowMs: 1 * 60 * 1000, // 1 minute
-      max: 10, // 10 AI requests per minute
-      message: {
-        error: 'AI processing rate limit exceeded. Please wait a moment.'
-      }
+    mongoose.connection.on('disconnected', () => {
+      console.warn('⚠️  MongoDB disconnected');
     });
 
-    // Body parsing
-    this.app.use(express.json({ limit: '10mb' }));
-    this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-    // Compression
-    this.app.use(compression());
-
-    // Logging
-    if (config.nodeEnv !== 'test') {
-      this.app.use(morgan('combined'));
-    }
-    this.app.use(requestLogger);
-  }
-
-  private initializeRoutes(): void {
-    // Health check (no auth required)
-    this.app.use('/health', healthRoutes);
-
-    // API routes (auth required)
-    this.app.use('/api/v1/invoices', authMiddleware, invoiceRoutes);
-    this.app.use('/api/v1/ai', authMiddleware, aiRoutes);
-    this.app.use('/api/v1/webhooks', webhookRoutes);
-
-    // 404 handler
-    this.app.use('*', (req: express.Request, res: express.Response) => {
-      res.status(404).json({
-        success: false,
-        error: 'Endpoint not found',
-        message: `Cannot ${req.method} ${req.originalUrl}`
-      });
+    mongoose.connection.on('reconnected', () => {
+      console.log('✅ MongoDB reconnected');
     });
+  } catch (error) {
+    console.error('❌ MongoDB connection error:', error);
+    throw error;
   }
+}
 
-  private initializeErrorHandling(): void {
-    this.app.use(errorHandler);
+/**
+ * Initialize ADK-TS agents
+ */
+async function initializeAgents() {
+  try {
+    console.log('🤖 Initializing ADK-TS agents...');
+    await agentService.initialize();
+    console.log('✅ ADK-TS agents initialized');
+  } catch (error) {
+    console.error('❌ Failed to initialize agents:', error);
+    throw error;
   }
+}
 
-  public async start(): Promise<void> {
-    await this.initializeServices();
-    
-    const PORT = config.port;
-    
-    this.app.listen(PORT, () => {
+/**
+ * Start the server
+ */
+async function startServer() {
+  try {
+    // Connect to database
+    await connectDatabase();
+
+    // Initialize agents
+    await initializeAgents();
+
+    // Start listening
+    server.listen(env.PORT, () => {
       console.log(`
-🚀 Smart Invoice Backend Server Started!
-📍 Port: ${PORT}
-🌍 Environment: ${config.nodeEnv}
-📊 Database: Connected
-⛓️  Blockchain: ${config.stacks.network}
-🤖 AI Services: Enabled
+╔═══════════════════════════════════════════════════════════╗
+║                                                           ║
+║   🚀 DAO Governance Co-pilot Backend Server              ║
+║                                                           ║
+║   📍 Port: ${env.PORT.padEnd(48)}║
+║   🌍 Environment: ${env.NODE_ENV.padEnd(42)}║
+║   🔗 CORS Origin: ${env.CORS_ORIGIN.padEnd(42)}║
+║   📅 Started: ${new Date().toISOString().padEnd(44)}║
+║                                                           ║
+║   Endpoints:                                              ║
+║   • Health: GET /health                                   ║
+║   • API: POST /api/agent/*                                ║
+║   • WebSocket: ws://localhost:${env.PORT}${' '.padEnd(25)}║
+║                                                           ║
+╚═══════════════════════════════════════════════════════════╝
       `);
     });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
   }
+}
 
-  public async shutdown(): Promise<void> {
-    console.log('🛑 Shutting down server gracefully...');
-    
+/**
+ * Graceful shutdown handler
+ */
+async function gracefulShutdown(signal: string) {
+  console.log(`\n📡 ${signal} received, shutting down gracefully...`);
+
+  // Stop accepting new connections
+  server.close(async () => {
+    console.log('✅ HTTP server closed');
+
     try {
-      await this.prisma.$disconnect();
-      console.log('✅ Database disconnected');
+      // Close WebSocket connections
+      io.close(() => {
+        console.log('✅ WebSocket server closed');
+      });
+
+      // Shutdown agents
+      await agentService.shutdown();
+      console.log('✅ Agents shut down');
+
+      // Close database connection
+      await mongoose.connection.close();
+      console.log('✅ Database connection closed');
+
+      console.log('👋 Shutdown complete');
       process.exit(0);
     } catch (error) {
       console.error('❌ Error during shutdown:', error);
       process.exit(1);
     }
-  }
-}
-
-// Start server if this file is run directly
-if (require.main === module) {
-  const server = new Server();
-  server.start().catch((error) => {
-    console.error('Failed to start server:', error);
-    process.exit(1);
   });
 
-  // Graceful shutdown
-  process.on('SIGINT', () => server.shutdown());
-  process.on('SIGTERM', () => server.shutdown());
+  // Force shutdown after 30 seconds
+  setTimeout(() => {
+    console.error('⚠️  Forced shutdown after timeout');
+    process.exit(1);
+  }, 30000);
 }
 
+// Handle shutdown signals
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle uncaught errors
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  gracefulShutdown('uncaughtException');
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+// Start the server
+startServer().catch((error) => {
+  console.error('❌ Fatal error:', error);
+  process.exit(1);
+});
+
+export { app, server, io };

@@ -48,7 +48,7 @@ async function simpleExample() {
   console.log(`Confidence: ${(analysisResult.explainability.confidence * 100).toFixed(1)}%\n`);
 
   console.log('📝 Top Reasons for Recommendation:');
-  analysisResult.explainability.topReasons.forEach((reason, index) => {
+  analysisResult.explainability.topReasons.forEach((reason: string, index: number) => {
     console.log(`  ${index + 1}. ${reason}`);
   });
 
@@ -56,13 +56,13 @@ async function simpleExample() {
   if (analysisResult.explainability.riskFactors.length === 0) {
     console.log('  None identified');
   } else {
-    analysisResult.explainability.riskFactors.forEach((risk, index) => {
+    analysisResult.explainability.riskFactors.forEach((risk: string, index: number) => {
       console.log(`  ${index + 1}. ${risk}`);
     });
   }
 
   console.log('\n🤔 Alternative Views:');
-  analysisResult.explainability.alternativeViews.forEach((view, index) => {
+  analysisResult.explainability.alternativeViews.forEach((view: string, index: number) => {
     console.log(`  ${index + 1}. ${view}`);
   });
 
