@@ -1,0 +1,142 @@
+// Audit & Guardrail Database Schema
+// Add this to your main schema.prisma or use as separate schema
+
+// ============================================================================
+// Audit Events - Append-Only Immutable Log
+// ============================================================================
+
+model AuditEvent {
+  id        String   @id @default(uuid())
+  runId     String   @db.VarChar(255)
+  
+  // Agent & Model Info
+  agentId      String  @db.VarChar(100)
+  agentVersion String  @db.VarChar(50)
+  modelVersion String  @db.VarChar(100)
+  
+  // Cryptographic Hashes (for tamper-evidence)
+  promptHash  String  @db.VarChar(64)  // SHA256
+  outputHash  String  @db.VarChar(64)  // SHA256
+  merkleLeaf  String? @db.VarChar(64)  // For Merkle tree
+  
+  // Tool Calls (JSON array)
+  toolCalls Json?    // Array of {toolName, inputHash, outputHash, success, duration}
+  
+  // Guardrail Decisions (JSON array)
+  guardrailDecisions Json?  // Array of {tripwireId, reason, severity, timestamp}
+  
+  // Metadata
+  confidence    Float?
+  userContext   Json?
+  timestamp     BigInt    // Unix timestamp in ms
+  duration      Int?
+  status        String    @db.VarChar(50)  // success, failure, blocked, pending_approval
+  errorMessage  String?   @db.Text
+  
+  createdAt DateTime @default(now())
+  
+  @@index([runId])
+  @@index([agentId])
+  @@index([timestamp])
+  @@index([status])
+  @@index([modelVersion])
+  @@map("audit_events")
+}
+
+// ============================================================================
+// Merkle Roots - Daily/Hourly Batch Verification
+// ============================================================================
+
+model MerkleRoot {
+  id         String   @id @default(uuid())
+  root       String   @db.VarChar(64)  // Merkle root hash
+  timestamp  BigInt   // When computed
+  eventCount Int      // Number of events in this batch
+  startDate  DateTime // Batch start
+  endDate    DateTime // Batch end
+  
+  // Optional: Publish to IPFS or on-chain
+  ipfsHash   String?  @db.VarChar(100)
+  onChainTx  String?  @db.VarChar(100)
+  
+  createdAt DateTime @default(now())
+  
+  @@index([timestamp])
+  @@map("merkle_roots")
+}
+
+// ============================================================================
+// Pending Approvals - Human-in-the-Loop Queue
+// ============================================================================
+
+model PendingApproval {
+  id          String   @id @default(uuid())
+  runId       String   @db.VarChar(255)
+  tripwireId  String   @db.VarChar(255)
+  
+  // Decision that triggered approval
+  decision    Json     // GuardrailDecision object
+  
+  // Full context payload
+  payload     Json     // {agentId, modelVersion, promptHash, toolName, toolInputs, snapshot}
+  
+  // Status tracking
+  status      String   @db.VarChar(50)  // PENDING, APPROVED, REJECTED, EXPIRED
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+  
+  // Approval metadata
+  approverRole      String?  @db.VarChar(100)
+  approverSignature String?  @db.Text  // Cryptographic signature
+  approvedAt        DateTime?
+  rejectionReason   String?  @db.Text
+  
+  @@index([runId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([expiresAt])
+  @@map("pending_approvals")
+}
+
+// ============================================================================
+// Agent Run Metadata - High-Level Tracking
+// ============================================================================
+
+model AgentRun {
+  id        String   @id @default(uuid())
+  runId     String   @unique @db.VarChar(255)
+  
+  // Agent info
+  agentId      String  @db.VarChar(100)
+  agentVersion String  @db.VarChar(50)
+  modelVersion String  @db.VarChar(100)
+  
+  // User context
+  userId       String?  @db.VarChar(255)
+  userRole     String?  @db.VarChar(100)
+  
+  // Execution
+  startedAt    DateTime @default(now())
+  completedAt  DateTime?
+  duration     Int?     // milliseconds
+  status       String   @db.VarChar(50)  // running, success, failure, blocked
+  
+  // Results
+  confidence   Float?
+  recommendation String? @db.Text
+  
+  // Guardrails
+  guardrailTripped Boolean @default(false)
+  tripwireCount    Int     @default(0)
+  
+  // Costs (optional tracking)
+  tokenCount       Int?
+  estimatedCostUSD Float?
+  
+  @@index([agentId])
+  @@index([status])
+  @@index([startedAt])
+  @@index([userId])
+  @@map("agent_runs")
+}
+

@@ -1,0 +1,316 @@
+/**
+ * PostgreSQL Adapter for Audit Logging
+ * 
+ * Production-ready persistence using Prisma
+ * Provides append-only audit trail with cryptographic integrity
+ */
+
+import { PrismaClient } from '@prisma/client';
+import type {
+  AuditEvent,
+  MerkleRoot,
+  AuditPersistenceAdapter,
+} from './audit-logger';
+import type {
+  PendingApproval,
+  ApprovalStatus,
+  PersistenceAdapter,
+} from '../guardrail-manager-enhanced';
+
+// ============================================================================
+// PostgreSQL Audit Adapter
+// ============================================================================
+
+export class PostgresAuditAdapter implements AuditPersistenceAdapter {
+  private prisma: PrismaClient;
+  
+  constructor(prisma?: PrismaClient) {
+    this.prisma = prisma || new PrismaClient();
+  }
+  
+  async saveEvent(event: AuditEvent): Promise<void> {
+    await this.prisma.auditEvent.create({
+      data: {
+        id: event.id,
+        runId: event.runId,
+        agentId: event.agentId,
+        agentVersion: event.agentVersion,
+        modelVersion: event.modelVersion,
+        promptHash: event.promptHash,
+        outputHash: event.outputHash,
+        merkleLeaf: event.merkleLeaf,
+        toolCalls: event.toolCalls as any,
+        guardrailDecisions: event.guardrailDecisions as any,
+        confidence: event.confidence,
+        userContext: event.userContext as any,
+        timestamp: BigInt(event.timestamp),
+        duration: event.duration,
+        status: event.status,
+        errorMessage: event.errorMessage,
+      },
+    });
+  }
+  
+  async saveEvents(events: AuditEvent[]): Promise<void> {
+    await this.prisma.auditEvent.createMany({
+      data: events.map(event => ({
+        id: event.id,
+        runId: event.runId,
+        agentId: event.agentId,
+        agentVersion: event.agentVersion,
+        modelVersion: event.modelVersion,
+        promptHash: event.promptHash,
+        outputHash: event.outputHash,
+        merkleLeaf: event.merkleLeaf,
+        toolCalls: event.toolCalls as any,
+        guardrailDecisions: event.guardrailDecisions as any,
+        confidence: event.confidence,
+        userContext: event.userContext as any,
+        timestamp: BigInt(event.timestamp),
+        duration: event.duration,
+        status: event.status,
+        errorMessage: event.errorMessage,
+      })),
+    });
+  }
+  
+  async getEvent(eventId: string): Promise<AuditEvent | null> {
+    const event = await this.prisma.auditEvent.findUnique({
+      where: { id: eventId },
+    });
+    
+    if (!event) return null;
+    
+    return this.mapFromDb(event);
+  }
+  
+  async getEventsByRun(runId: string): Promise<AuditEvent[]> {
+    const events = await this.prisma.auditEvent.findMany({
+      where: { runId },
+      orderBy: { timestamp: 'asc' },
+    });
+    
+    return events.map(e => this.mapFromDb(e));
+  }
+  
+  async queryEvents(filters: {
+    agentId?: string;
+    modelVersion?: string;
+    status?: string;
+    startDate?: Date;
+    endDate?: Date;
+    limit?: number;
+  }): Promise<AuditEvent[]> {
+    const where: any = {};
+    
+    if (filters.agentId) {
+      where.agentId = filters.agentId;
+    }
+    
+    if (filters.modelVersion) {
+      where.modelVersion = filters.modelVersion;
+    }
+    
+    if (filters.status) {
+      where.status = filters.status;
+    }
+    
+    if (filters.startDate || filters.endDate) {
+      where.timestamp = {};
+      if (filters.startDate) {
+        where.timestamp.gte = BigInt(filters.startDate.getTime());
+      }
+      if (filters.endDate) {
+        where.timestamp.lte = BigInt(filters.endDate.getTime());
+      }
+    }
+    
+    const events = await this.prisma.auditEvent.findMany({
+      where,
+      orderBy: { timestamp: 'desc' },
+      take: filters.limit || 100,
+    });
+    
+    return events.map(e => this.mapFromDb(e));
+  }
+  
+  async saveMerkleRoot(root: MerkleRoot): Promise<void> {
+    await this.prisma.merkleRoot.create({
+      data: {
+        root: root.root,
+        timestamp: BigInt(root.timestamp),
+        eventCount: root.eventCount,
+        startDate: new Date(root.startDate),
+        endDate: new Date(root.endDate),
+        ipfsHash: root.ipfsHash,
+        onChainTx: root.onChainTx,
+      },
+    });
+  }
+  
+  async getMerkleRoots(): Promise<MerkleRoot[]> {
+    const roots = await this.prisma.merkleRoot.findMany({
+      orderBy: { timestamp: 'desc' },
+    });
+    
+    return roots.map(r => ({
+      root: r.root,
+      timestamp: Number(r.timestamp),
+      eventCount: r.eventCount,
+      startDate: r.startDate.toISOString(),
+      endDate: r.endDate.toISOString(),
+      ipfsHash: r.ipfsHash || undefined,
+      onChainTx: r.onChainTx || undefined,
+    }));
+  }
+  
+  private mapFromDb(dbEvent: any): AuditEvent {
+    return {
+      id: dbEvent.id,
+      runId: dbEvent.runId,
+      agentId: dbEvent.agentId,
+      agentVersion: dbEvent.agentVersion,
+      modelVersion: dbEvent.modelVersion,
+      promptHash: dbEvent.promptHash,
+      outputHash: dbEvent.outputHash,
+      merkleLeaf: dbEvent.merkleLeaf || undefined,
+      toolCalls: dbEvent.toolCalls as any,
+      guardrailDecisions: dbEvent.guardrailDecisions as any,
+      confidence: dbEvent.confidence || undefined,
+      userContext: dbEvent.userContext as any,
+      timestamp: Number(dbEvent.timestamp),
+      duration: dbEvent.duration || undefined,
+      status: dbEvent.status as any,
+      errorMessage: dbEvent.errorMessage || undefined,
+    };
+  }
+}
+
+// ============================================================================
+// PostgreSQL Guardrail Persistence Adapter
+// ============================================================================
+
+export class PostgresGuardrailAdapter implements PersistenceAdapter {
+  private prisma: PrismaClient;
+  
+  constructor(prisma?: PrismaClient) {
+    this.prisma = prisma || new PrismaClient();
+  }
+  
+  async savePendingApproval(approval: PendingApproval): Promise<string> {
+    const result = await this.prisma.pendingApproval.create({
+      data: {
+        runId: approval.runId,
+        tripwireId: approval.tripwireId,
+        decision: approval.decision as any,
+        payload: approval.payload as any,
+        status: approval.status,
+        createdAt: approval.createdAt,
+        expiresAt: approval.expiresAt,
+        approverRole: approval.approverRole,
+        approverSignature: approval.approverSignature,
+        approvedAt: approval.approvedAt,
+        rejectionReason: undefined,
+      },
+    });
+    
+    return result.id;
+  }
+  
+  async getPendingApproval(approvalId: string): Promise<PendingApproval | null> {
+    const approval = await this.prisma.pendingApproval.findUnique({
+      where: { id: approvalId },
+    });
+    
+    if (!approval) return null;
+    
+    return this.mapApprovalFromDb(approval);
+  }
+  
+  async updateApprovalStatus(
+    approvalId: string,
+    status: ApprovalStatus,
+    approverRole: string,
+    approverSignature?: string,
+    rejectionReason?: string
+  ): Promise<void> {
+    await this.prisma.pendingApproval.update({
+      where: { id: approvalId },
+      data: {
+        status,
+        approverRole,
+        approverSignature,
+        approvedAt: status === 'APPROVED' ? new Date() : undefined,
+        rejectionReason,
+      },
+    });
+  }
+  
+  async listPendingApprovals(filters?: {
+    agentId?: string;
+    status?: ApprovalStatus;
+  }): Promise<PendingApproval[]> {
+    const where: any = {};
+    
+    if (filters?.status) {
+      where.status = filters.status;
+    }
+    
+    // For agentId filter, we need to query the payload JSON
+    // This is database-specific; adjust based on your DB
+    
+    const approvals = await this.prisma.pendingApproval.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+    });
+    
+    let results = approvals.map(a => this.mapApprovalFromDb(a));
+    
+    // Filter by agentId if needed (post-query filter)
+    if (filters?.agentId) {
+      results = results.filter(a => a.payload.agentId === filters.agentId);
+    }
+    
+    return results;
+  }
+  
+  private mapApprovalFromDb(dbApproval: any): PendingApproval {
+    return {
+      runId: dbApproval.runId,
+      tripwireId: dbApproval.tripwireId,
+      decision: dbApproval.decision as any,
+      payload: dbApproval.payload as any,
+      status: dbApproval.status as ApprovalStatus,
+      createdAt: dbApproval.createdAt,
+      expiresAt: dbApproval.expiresAt,
+      approverRole: dbApproval.approverRole || undefined,
+      approverSignature: dbApproval.approverSignature || undefined,
+      approvedAt: dbApproval.approvedAt || undefined,
+    };
+  }
+}
+
+// ============================================================================
+// Factory Functions
+// ============================================================================
+
+let prismaInstance: PrismaClient | null = null;
+
+export function getPrismaClient(): PrismaClient {
+  if (!prismaInstance) {
+    prismaInstance = new PrismaClient({
+      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    });
+  }
+  return prismaInstance;
+}
+
+export function createPostgresAuditAdapter(): PostgresAuditAdapter {
+  return new PostgresAuditAdapter(getPrismaClient());
+}
+
+export function createPostgresGuardrailAdapter(): PostgresGuardrailAdapter {
+  return new PostgresGuardrailAdapter(getPrismaClient());
+}
+

@@ -45,7 +45,11 @@
     "bot:discord": "tsx src/adk-agents/bots/discord-bot.ts",
     "bot:telegram": "tsx src/adk-agents/bots/telegram-bot.ts",
     "bots:start": "concurrently \"npm run bot:discord\" \"npm run bot:telegram\"",
-    "x402:test": "tsx src/adk-agents/tools/x402-payment.ts"
+    "x402:test": "tsx src/adk-agents/tools/x402-payment.ts",
+    "audit:check": "tsx -e \"import {auditLogger} from './src/audit/audit-logger'; auditLogger.queryEvents({limit:10}).then(console.log)\"",
+    "audit:merkle": "tsx -e \"import {auditLogger} from './src/audit/audit-logger'; auditLogger.computeMerkleRoot(new Date(Date.now()-86400000), new Date()).then(r => console.log('Root:', r.root))\"",
+    "guardrails:test": "tsx src/agents/proposal-analyst-with-audit.example.ts",
+    "safety:demo": "tsx src/agents/proposal-analyst-with-audit.example.ts"
   },
   "keywords": [
     "blockchain",

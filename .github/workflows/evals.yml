@@ -1,0 +1,134 @@
+# Continuous Evaluation - Model Safety & Accuracy
+#
+# Runs agent evals against gold standard dataset to detect:
+# - Accuracy degradation from model changes
+# - Prompt regression
+# - Output schema compliance
+#
+# FAILS if agreement score < 70%
+
+name: Agent Evals
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'src/agents/**'
+      - 'src/adk-agents/**'
+      - 'evals/**'
+      - 'package.json'
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run nightly at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  run-evals:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run TypeScript type check
+        run: npm run agents:check
+      
+      - name: Run unit tests
+        run: npm test
+        env:
+          NODE_ENV: test
+      
+      - name: Run agent evals
+        run: npm run eval:adk -- --json --output eval-results.json
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          NODE_ENV: test
+          # Use testnet for any blockchain interactions
+          ETHEREUM_RPC_URL: ${{ secrets.TESTNET_RPC_URL }}
+      
+      - name: Check eval agreement threshold
+        run: node scripts/check-eval-threshold.js --threshold 0.70 --results eval-results.json
+      
+      - name: Upload eval results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-results-${{ matrix.node-version }}
+          path: eval-results.json
+          retention-days: 30
+      
+      - name: Comment eval results on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('eval-results.json', 'utf8'));
+            
+            const comment = `## 🤖 Agent Eval Results
+            
+            **Agreement Score**: ${(results.agreement * 100).toFixed(1)}% ${results.agreement >= 0.70 ? '✅' : '❌'}
+            **Total Cases**: ${results.total}
+            **Passed**: ${results.passed}
+            **Failed**: ${results.failed}
+            **Threshold**: 70%
+            
+            ${results.agreement < 0.70 ? '⚠️ **WARNING**: Agreement below threshold! Review model/prompt changes.' : '✅ All evals passed!'}
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+      
+      - name: Fail if agreement < 70%
+        run: |
+          AGREEMENT=$(node -e "console.log(require('./eval-results.json').agreement)")
+          if (( $(echo "$AGREEMENT < 0.70" | bc -l) )); then
+            echo "❌ Eval agreement ($AGREEMENT) below threshold (0.70)"
+            exit 1
+          fi
+          echo "✅ Eval agreement ($AGREEMENT) passes threshold"
+
+  security-checks:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+      
+      - name: Check for exposed secrets
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --only-verified
+      
+      - name: Scan for vulnerable dependencies
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
