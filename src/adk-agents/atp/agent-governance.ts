@@ -86,7 +86,7 @@ export class AgentGovernance {
     
     if (privateKey) {
       this.signer = new ethers.Wallet(privateKey, this.provider);
-      this.governanceContract = this.governanceContract.connect(this.signer);
+      this.governanceContract = this.governanceContract.connect(this.signer) as ethers.Contract;
     }
   }
   

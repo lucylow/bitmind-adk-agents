@@ -9,7 +9,6 @@
  */
 
 import { AgentBuilder } from '../core/agent-builder';
-import { tool } from '@iqai/adk';
 import { z } from 'zod';
 import { AgentWallet } from '../atp/agent-wallet';
 import type { Agent } from '../core/agent-builder';
@@ -70,10 +69,11 @@ export class PremiumAnalystATPAgent {
   
   private createAgent(): Agent {
     // Premium analysis tool that requires payment
-    const premiumAnalysisTool = tool({
+    // Note: Wrapped as a plain object until tool() is available from @iqai/adk
+    const premiumAnalysisTool = {
       name: 'analyze_proposal_premium',
       description: 'Provide premium DAO proposal analysis with advanced features (paid feature)',
-      input: z.object({
+      inputSchema: z.object({
         proposalId: z.string().describe('Proposal ID to analyze'),
         daoAddress: z.string().describe('DAO contract address'),
         userAddress: z.string().describe('User requesting the analysis'),
@@ -171,18 +171,18 @@ export class PremiumAnalystATPAgent {
           revenueShared: `${revenueShareAmount} ETH distributed to token holders`,
           message: 'Premium analysis completed successfully'
         };
-      }
-    });
+      },
+    };
     
     // Agent status tool
-    const agentStatusTool = tool({
+    const agentStatusTool = {
       name: 'get_agent_status',
       description: 'Get current status of the ATP-enabled agent including capabilities and pricing',
-      input: z.object({}),
+      inputSchema: z.object({}),
       execute: async () => {
         return await this.wallet.getStatus();
-      }
-    });
+      },
+    };
     
     // Build the agent with ATP capabilities
     return AgentBuilder
